@@ -1,4 +1,4 @@
-# MRV App (Angular 20 + NestJS + MongoDB 8)
+# MRV App
 
 A modern, production-grade **MRV** (Measurement, Reporting & Verification) web application for GHG emissions.
 
