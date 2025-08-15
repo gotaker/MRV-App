@@ -102,3 +102,6 @@ The **Docker images from this dev environment** are production-ready with minima
 - [ ] Import and map BSON datasets for emission factors and reference data.
 - [ ] Add Terraform IaC for AWS production deployment.
 
+
+
+**Stack notes:** Frontend is Angular 20; Database is MongoDB 8.
