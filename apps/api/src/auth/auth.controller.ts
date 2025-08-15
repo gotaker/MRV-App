@@ -1,58 +1,71 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
-import { LoginDto } from '../common/dto/login.dto';
-import { RegisterDto } from '../common/dto/register.dto';
+import { LoginDto, RegisterDto } from '../common/dto/login.dto';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
+import { JwtAuthGuard } from './jwt.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private auth: AuthService, private users: UsersService) {}
+  constructor(
+    private auth: AuthService,
+    private users: UsersService,
+    private jwt: JwtService
+  ) {}
 
   @Post('register')
-  async register(@Body() dto: RegisterDto) {
-    const hash = await bcrypt.hash(dto.password, 10);
-    const user = await this.users.createUser(dto.email, dto.name, hash, dto.roles);
+  async register(@Body() body: RegisterDto) {
+    const passwordHash = await bcrypt.hash(body.password, 10);
+    const user = await this.users.create({
+      email: body.email,
+      name: body.name,
+      passwordHash,
+      roles: ['admin'],
+      active: true,
+    });
     return { id: user._id, email: user.email };
   }
 
   @Post('login')
-  async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res) {
-    const user = await this.auth.validateUser(dto.email, dto.password);
-    const accessToken = this.auth.signAccess(user);
-    const refreshToken = this.auth.signRefresh(user);
+  async login(@Body() body: LoginDto, @Res({ passthrough: true }) res: Response) {
+    const user = await this.auth.validateUser(body.email, body.password);
+    if (!user) throw new Error('Invalid credentials');
+    const { accessToken, refreshToken } = await this.auth.login(user);
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
-      secure: false,
       sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      secure: false,
+      maxAge: 7 * 24 * 3600 * 1000,
       path: '/auth/refresh',
     });
     return { accessToken };
   }
 
   @Post('refresh')
-  async refresh(@Req() req) {
-    const token = req.cookies?.refresh_token;
-    if (!token) return { accessToken: null };
-    const payload = this.auth.verifyRefresh(token);
-    const user = { _id: payload.sub, email: '', roles: [] };
-    const accessToken = this.auth.signAccess(user);
+  async refresh(@Req() req: Request) {
+    const token = req.cookies?.['refresh_token'];
+    if (!token) throw new Error('No refresh token');
+    const payload = await this.jwt.verifyAsync(token, {
+      secret: process.env.API_REFRESH_SECRET || 'dev-refresh',
+    });
+    const accessToken = await this.jwt.signAsync(
+      { sub: payload.sub },
+      { secret: process.env.API_JWT_SECRET || 'dev-secret', expiresIn: process.env.API_JWT_EXPIRES || '15m' },
+    );
     return { accessToken };
   }
 
   @Post('logout')
-  async logout(@Res({ passthrough: true }) res) {
+  async logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('refresh_token', { path: '/auth/refresh' });
     return { ok: true };
   }
 
   @Get('me')
-  async me(@Req() req) {
-    // For dev simplicity, return minimal info if Authorization exists; later protect with guard
-    const auth = req.headers['authorization'] || '';
-    if (!auth.startsWith('Bearer ')) return null;
-    // token payload decode optional; keeping simple
-    return { email: 'dev@user', id: 'me' };
+  @UseGuards(JwtAuthGuard)
+  async me(@Req() req: any) {
+    return req.user;
   }
 }

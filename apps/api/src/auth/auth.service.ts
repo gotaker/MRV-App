@@ -7,30 +7,32 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
   constructor(private users: UsersService, private jwt: JwtService) {}
 
+  private signAccess(payload: any) {
+    return this.jwt.signAsync(payload, {
+      secret: process.env.API_JWT_SECRET || 'dev-secret',
+      expiresIn: process.env.API_JWT_EXPIRES || '15m',
+    });
+  }
+
+  private signRefresh(payload: any) {
+    return this.jwt.signAsync(payload, {
+      secret: process.env.API_REFRESH_SECRET || 'dev-refresh',
+      expiresIn: process.env.API_REFRESH_EXPIRES || '7d',
+    });
+  }
+
   async validateUser(email: string, password: string) {
     const user = await this.users.findByEmail(email);
-    if (!user) throw new UnauthorizedException('Invalid credentials');
+    if (!user || !user.active) return null;
     const ok = await bcrypt.compare(password, user.passwordHash);
-    if (!ok) throw new UnauthorizedException('Invalid credentials');
+    if (!ok) return null;
     return user;
   }
 
-  signAccess(user: any) {
-    const payload = { sub: user._id.toString(), email: user.email, roles: user.roles || [] };
-    const secret = process.env.API_JWT_SECRET || 'dev-secret';
-    const expiresIn = process.env.API_JWT_EXPIRES || '15m';
-    return this.jwt.sign(payload, { secret, expiresIn });
-  }
-
-  signRefresh(user: any) {
-    const payload = { sub: user._id.toString(), typ: 'refresh' };
-    const secret = process.env.API_REFRESH_SECRET || 'dev-refresh';
-    const expiresIn = process.env.API_REFRESH_EXPIRES || '7d';
-    return this.jwt.sign(payload, { secret, expiresIn });
-  }
-
-  verifyRefresh(token: string) {
-    const secret = process.env.API_REFRESH_SECRET || 'dev-refresh';
-    return this.jwt.verify(token, { secret });
+  async login(user: any) {
+    const payload = { sub: user._id.toString(), email: user.email, roles: user.roles };
+    const accessToken = await this.signAccess(payload);
+    const refreshToken = await this.signRefresh({ sub: payload.sub });
+    return { accessToken, refreshToken };
   }
 }

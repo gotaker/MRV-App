@@ -7,12 +7,24 @@ import { User, UserDocument } from '../schemas/user.schema';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async findByEmail(email: string) {
+  findByEmail(email: string) {
     return this.userModel.findOne({ email: email.toLowerCase() }).exec();
   }
 
-  async createUser(email: string, name: string, passwordHash: string, roles: string[] = ['user']) {
-    const doc = new this.userModel({ email: email.toLowerCase(), name, passwordHash, roles });
-    return doc.save();
+  findById(id: string) {
+    return this.userModel.findById(id).exec();
+  }
+
+  async create(user: Partial<User>) {
+    const doc = new this.userModel(user);
+    return await doc.save();
+  }
+
+  async list() {
+    return this.userModel.find().select('-passwordHash').lean().exec();
+  }
+
+  async remove(id: string) {
+    return this.userModel.findByIdAndDelete(id).exec();
   }
 }
