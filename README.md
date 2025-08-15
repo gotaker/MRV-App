@@ -75,24 +75,21 @@ flowchart LR
 flowchart LR
   user([Analyst / Admin User]) -->|HTTPS| web[Web App (Angular 20)]
 
-  subgraph API [API (NestJS 10)]
-    direction LR
-    auth[Auth & RBAC\n- JWT Access\n- Refresh Cookie\n- Guards/Decorators]
-    users[User Admin\n- Create/Disable/Reset\n- Roles]
-    catalog[Factor Catalog\n- Factors/Units/Sources\n- Versioning & Traceability]
-    ingest[Activity Ingestion\n- Upload/Validate/Map\n- Job Status & Errors]
-    calc[Calculation Engine\n- Scope 1/2/3\n- CO₂e & Uncertainty\n- Recompute Strategy]
-    report[Inventory & Reporting\n- Org/Project/Asset\n- Period Reports & Exports]
-    audit[Audit Log\n- Inputs/Outputs/Actor\n- Reproducibility]
+  subgraph API["API (NestJS 10)"]
+    auth[Auth & RBAC<br/>JWT Access + Refresh Cookie<br/>Guards/Decorators]
+    users[User Admin<br/>Create/Disable/Reset<br/>Roles]
+    catalog[Factor Catalog<br/>Factors/Units/Sources<br/>Versioning & Traceability]
+    ingest[Activity Ingestion<br/>Upload/Validate/Map<br/>Job Status & Errors]
+    calc[Calculation Engine<br/>Scope 1/2/3<br/>CO₂e & Uncertainty<br/>Recompute Strategy]
+    report[Inventory & Reporting<br/>Org/Project/Asset<br/>Period Reports & Exports]
+    audit[Audit Log<br/>Inputs/Outputs/Actor<br/>Reproducibility]
   end
 
-  subgraph DataStores [Data Stores]
-    direction TB
-    mongo[(MongoDB 8\nUsers/Factors/Activity/Results/Audit)]
-    obj[(Object Storage\nMinIO/S3: Uploads & Exports)]
+  subgraph DataStores["Data Stores"]
+    mongo[(MongoDB 8<br/>Users/Factors/Activity/Results/Audit)]
+    obj[(Object Storage<br/>MinIO/S3: Uploads & Exports)]
   end
 
-  %% Flows
   web -->|/auth/login /refresh /me| auth
   auth --> users
   auth --> catalog
@@ -100,24 +97,23 @@ flowchart LR
   auth --> calc
   auth --> report
 
-  catalog <--> mongo
+  catalog <-->|CRUD| mongo
   web -->|Presigned upload| ingest
   ingest --> obj
   ingest --> mongo
 
   calc --> mongo
-  calc --> audit --> mongo
+  calc --> audit
+  audit --> mongo
 
   report --> mongo
   report --> obj
   report --> web
 
-  %% Notifications
   users -->|Invites/Resets| smtp[SMTP (Mailhog/SES)]
 
-  %% Production hints (dashed)
-  web -.-> cdn[CDN (CloudFront) – prod]
-  auth -.-> ecs[ECS Fargate/ALB – prod]
+  web -.-> cdn[CDN (CloudFront) - prod]
+  auth -.-> ecs[ECS Fargate/ALB - prod]
 ```
 
 ---
@@ -129,16 +125,15 @@ flowchart LR
   user([Analyst]) --> web[Web App (Angular)]
 
   subgraph Storage
-    obj[(Object Storage\nMinIO/S3)]
+    obj[(Object Storage<br/>MinIO/S3)]
     mongo[(MongoDB 8)]
   end
 
   subgraph Ingestion["Ingestion Service"]
-    direction LR
-    up[Upload File\nCSV/XLSX/API] --> val[Validate Schema\nTypes/Units/Ranges]
-    val --> map[Map Fields\nTemplates/Profiles]
+    up[Upload File<br/>CSV/XLSX/API] --> val[Validate Schema<br/>Types/Units/Ranges]
+    val --> map[Map Fields<br/>Templates/Profiles]
     map --> store1[Store Valid Rows]
-    map --> err[Collect Errors\nRow-level CSV]
+    map --> err[Collect Errors<br/>Row-level CSV]
   end
 
   web -->|Presigned PUT| obj
@@ -147,20 +142,15 @@ flowchart LR
   err --> obj
 
   subgraph Engine["Calculation Engine"]
-    direction LR
-    pick[Resolve Factors\nVersioned Catalog]
-    compute[Compute CO₂e\nScope 1/2/3\nUncertainty]
-    audit[Write Audit Trail]
-    pick --> compute --> audit
+    pick[Resolve Factors<br/>Versioned Catalog] --> compute[Compute CO₂e<br/>Scope 1/2/3<br/>Uncertainty] --> audit[Write Audit Trail]
   end
 
   mongo --> pick
   compute --> res[Results -> Mongo]
 
   subgraph Reporting["Inventory & Reporting"]
-    direction LR
-    inv[Inventory Views\nOrg/Project/Asset]
-    exp[Exports\nCSV/XLSX/PDF]
+    inv[Inventory Views<br/>Org/Project/Asset]
+    exp[Exports<br/>CSV/XLSX/PDF]
   end
 
   res --> inv
@@ -314,7 +304,7 @@ openssl x509 -in ./certs/localhost.pem -noout -text | grep -A1 "Subject Alternat
 
 Curl without self-signed warnings:
 ```bash
-curl -sv https://localhost 2>&1 | grep -i "issuer\|subject\|SSL connection"
+curl -sv https://localhost 2>&1 | grep -i "issuer\\|subject\\|SSL connection"
 ```
 
 ---
