@@ -1,107 +1,18 @@
-# MRV App – Development Environment
+# SSL Add-on for MRV Dev Env
 
-This is the **local development environment** for the MRV GHG Inventory application.  
-It is designed to run entirely in Docker for rapid local iteration, with an architecture that mirrors AWS production.
+This bundle adds HTTPS locally using **Traefik** as a reverse proxy, and includes an optional guide to serve Angular directly over HTTPS.
 
----
+## Files
+- `docker-compose.https.yml` — Compose override defining the Traefik service and routing rules
+- `traefik/traefik.yml` & `traefik/dynamic.yml` — Traefik configs (uses the certificate from ./certs)
+- `certs/README.md` — how to create trusted certs via mkcert
+- `ANGULAR_HTTPS.md` — optional direct-HTTPS for Angular dev server
 
-## Services
+## Usage
+1. Create trusted localhost certs (`certs/README.md`).
+2. Start Traefik + apps:
+   ```bash
+   docker compose -f docker-compose.yml -f docker-compose.https.yml --profile traefik up -d traefik web api
+   ```
+3. Open **https://localhost** (Angular) and **http://localhost:8080** (Traefik dashboard).
 
-| Service         | Purpose                                     | Local URL |
-|-----------------|---------------------------------------------|-----------|
-| **api**         | NestJS backend API                          | http://localhost:3000 |
-| **web**         | Angular frontend (placeholder in dev)       | http://localhost:4200 |
-| **mongo**       | MongoDB database                            | n/a |
-| **mongo-express** | MongoDB admin UI                         | http://localhost:8081 |
-| **minio**       | S3-compatible object storage (file uploads) | http://localhost:9001 (console) / http://localhost:9000 (API) |
-| **mailhog**     | Email testing SMTP/Web UI                    | http://localhost:8025 |
-
----
-
-## Quick Start
-
-```bash
-# 1. Clone this repo
-git clone <your-repo-url>
-cd dev-env
-
-# 2. Start the stack
-docker compose up --build
-
-# 3. Verify health endpoints
-curl http://localhost:3000/healthz
-curl http://localhost:3000/readyz
-```
-
-The `api` and `web` containers mount local code for hot-reload development.
-
----
-
-## Seeding Data
-
-- Place `.js` init scripts or a `dump/` directory in `./seeds/mongo/`.
-- BSON dumps from the legacy app can be converted to `mongodump` layout.
-
-Example seed script location:
-```
-seeds/mongo/001-init.js
-```
-
-To manually restore a dump:
-```bash
-docker exec -it mrv-mongo bash
-mongorestore -u $MONGO_INITDB_ROOT_USERNAME -p $MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin /docker-entrypoint-initdb.d/dump
-```
-
----
-
-## Development Workflow
-
-### API (NestJS)
-- Located in `apps/api`.
-- Start in dev mode:
-```bash
-docker compose exec api npm run start:dev
-```
-
-### Web (Angular placeholder)
-- Located in `apps/web` (replace with Angular app).
-- Start in dev mode:
-```bash
-docker compose exec web npm run start
-```
-
----
-
-## Porting to AWS
-
-When ready for production:
-1. Replace MinIO with AWS S3.
-2. Move secrets from `.env` to AWS Secrets Manager / SSM Parameter Store.
-3. Deploy containers to ECS Fargate (or EKS) with Terraform (`infra/` directory).
-4. Use RDS/Aurora or DocumentDB for the database.
-5. Serve frontend via CloudFront + S3 static site hosting.
-
-The **Docker images from this dev environment** are production-ready with minimal change.
-
----
-
-## Health Checks
-
-- API: `/healthz` and `/readyz`
-- Mongo: ping via `mongosh` in container
-- MinIO: console reachable, bucket auto-created
-- Mailhog: UI reachable
-
----
-
-## Next Steps
-
-- [ ] Implement Auth & Users module in API.
-- [ ] Replace frontend placeholder with Angular 18 app.
-- [ ] Import and map BSON datasets for emission factors and reference data.
-- [ ] Add Terraform IaC for AWS production deployment.
-
-
-
-**Stack notes:** Frontend is Angular 20; Database is MongoDB 8.
