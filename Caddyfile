@@ -1,19 +1,17 @@
 # Caddy reverse proxy with local TLS for dev
 {
-  auto_https disable_redirects
+    auto_https disable_redirects
 }
 
 https://localhost {
-  # mkcert-generated certs you'll create in ./certs
-  tls /certs/localhost.pem /certs/localhost-key.pem
+    tls /certs/localhost.pem /certs/localhost-key.pem
 
-  @api path /api*
-  handle @api {
-    reverse_proxy api:3000
-  }
+    @api path /api*
+    handle @api {
+        reverse_proxy api:3000
+    }
 
-  # Everything else → Angular dev server (supports HMR/WebSockets)
-  handle {
-    reverse_proxy web:4200
-  }
+    handle {
+        reverse_proxy web:4200
+    }
 }

@@ -1,71 +1,44 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
-import { LoginDto, RegisterDto } from '../common/dto/login.dto';
-import { UsersService } from '../users/users.service';
-import * as bcrypt from 'bcrypt';
+import { LoginDto } from '../common/dto/login.dto';
+import { RegisterDto } from '../common/dto/register.dto';
 import { JwtAuthGuard } from './jwt.guard';
-import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private auth: AuthService,
-    private users: UsersService,
-    private jwt: JwtService
-  ) {}
+  constructor(private readonly auth: AuthService) {}
 
   @Post('register')
-  async register(@Body() body: RegisterDto) {
-    const passwordHash = await bcrypt.hash(body.password, 10);
-    const user = await this.users.create({
-      email: body.email,
-      name: body.name,
-      passwordHash,
-      roles: ['admin'],
-      active: true,
-    });
-    return { id: user._id, email: user.email };
+  register(@Body() body: RegisterDto) {
+    return this.auth.register(body.email, body.password, body.name);
   }
 
   @Post('login')
-  async login(@Body() body: LoginDto, @Res({ passthrough: true }) res: Response) {
-    const user = await this.auth.validateUser(body.email, body.password);
-    if (!user) throw new Error('Invalid credentials');
-    const { accessToken, refreshToken } = await this.auth.login(user);
-    res.cookie('refresh_token', refreshToken, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false,
-      maxAge: 7 * 24 * 3600 * 1000,
-      path: '/auth/refresh',
-    });
-    return { accessToken };
+  login(@Body() body: LoginDto, @Res({ passthrough: true }) res: Response) {
+    return this.auth.login(body.email, body.password, res);
   }
 
   @Post('refresh')
-  async refresh(@Req() req: Request) {
+  refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const token = req.cookies?.['refresh_token'];
-    if (!token) throw new Error('No refresh token');
-    const payload = await this.jwt.verifyAsync(token, {
-      secret: process.env.API_REFRESH_SECRET || 'dev-refresh',
-    });
-    const accessToken = await this.jwt.signAsync(
-      { sub: payload.sub },
-      { secret: process.env.API_JWT_SECRET || 'dev-secret', expiresIn: process.env.API_JWT_EXPIRES || '15m' },
-    );
-    return { accessToken };
+    return this.auth.refresh(token, res);
   }
 
   @Post('logout')
-  async logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('refresh_token', { path: '/auth/refresh' });
-    return { ok: true };
+  logout(@Res({ passthrough: true }) res: Response) {
+    return this.auth.logout(res);
   }
 
-  @Get('me')
   @UseGuards(JwtAuthGuard)
-  async me(@Req() req: any) {
-    return req.user;
+  @Get('me')
+  me(@Req() req: any) {
+    return { id: req.user.userId, email: req.user.email, roles: req.user.roles };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('whoami')
+  whoami(@Req() req: any) {
+    return { id: req.user.userId, email: req.user.email, roles: req.user.roles };
   }
 }

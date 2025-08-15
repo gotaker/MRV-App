@@ -9,13 +9,10 @@ async function bootstrap() {
   app.use(helmet());
   app.use(cookieParser());
   app.enableCors({
-  origin: process.env.CORS_ORIGIN || true,
-  credentials: true,
-});
+    origin: process.env.CORS_ORIGIN || true,
+    credentials: true,
+  });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   await app.listen(process.env.API_PORT || 3000);
 }
-
 bootstrap();
-
-{ httpOnly: true, secure: process.env.COOKIE_SECURE === 'true', sameSite: 'lax' }
