@@ -1,6 +1,8 @@
+// src/app/app.component.ts
 import { Component, inject } from '@angular/core';
-import { HttpClient, CommonModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 
 @Component({
@@ -14,8 +16,14 @@ import { AuthService } from './auth.service';
       <section style="margin-bottom: 2rem;">
         <h2>Login</h2>
         <form (ngSubmit)="doLogin()">
-          <label>Email: <input [(ngModel)]="email" name="email" /></label><br/>
-          <label>Password: <input type="password" [(ngModel)]="password" name="password" /></label><br/>
+          <label>Email:
+            <input [(ngModel)]="email" name="email" required />
+          </label>
+          <br />
+          <label>Password:
+            <input type="password" [(ngModel)]="password" name="password" required />
+          </label>
+          <br />
           <button type="submit">Login</button>
         </form>
         <div *ngIf="loginResult">
@@ -30,12 +38,16 @@ import { AuthService } from './auth.service';
         <pre>{{ pingResult }}</pre>
       </section>
     </main>
-  `
+  `,
 })
 export class AppComponent {
   private http = inject(HttpClient);
   private auth = inject(AuthService);
-  apiBase = (window as any).__API_BASE__ || 'http://localhost:3000';
+
+  // Use the dev proxy so requests go to the Docker "api" service
+  // (we set this up in proxy.conf.json)
+  readonly apiBase = '/api';
+
   pingResult = '';
   loginResult = '';
   email = '';
@@ -43,15 +55,30 @@ export class AppComponent {
 
   ping() {
     this.http.get(this.apiBase + '/healthz').subscribe({
-      next: (res) => this.pingResult = JSON.stringify(res, null, 2),
-      error: (err) => this.pingResult = 'Error: ' + err.message
+      next: (res) => (this.pingResult = JSON.stringify(res, null, 2)),
+      error: (err) => (this.pingResult = 'Error: ' + (err?.message ?? err)),
     });
   }
 
+  // Choose ONE of the following patterns depending on your AuthService:
+
+  // A) If AuthService.login returns an Observable
   doLogin() {
+    // Expected signature: login(email: string, password: string): Observable<any>
     this.auth.login(this.email, this.password).subscribe({
-      next: (res) => this.loginResult = JSON.stringify(res, null, 2),
-      error: (err) => this.loginResult = 'Error: ' + err.message
+      next: (res) => (this.loginResult = JSON.stringify(res, null, 2)),
+      error: (err) => (this.loginResult = 'Error: ' + (err?.message ?? err)),
     });
   }
+
+  // B) If AuthService.login expects an object and returns a Promise (our earlier scaffold)
+  // async doLogin() {
+  //   this.loginResult = '';
+  //   try {
+  //     const res = await this.auth.login({ email: this.email, password: this.password });
+  //     this.loginResult = JSON.stringify(res, null, 2);
+  //   } catch (err: any) {
+  //     this.loginResult = 'Error: ' + (err?.message ?? err);
+  //   }
+  // }
 }
