@@ -16,32 +16,45 @@ exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
+const bcrypt = require("bcrypt");
 const user_schema_1 = require("../schemas/user.schema");
 let UsersService = class UsersService {
     constructor(userModel) {
         this.userModel = userModel;
     }
-    findByEmail(email) {
+    async findByEmail(email) {
         return this.userModel.findOne({ email: email.toLowerCase() }).exec();
     }
-    findById(id) {
+    async findById(id) {
         return this.userModel.findById(id).exec();
     }
-    async create(user) {
-        const doc = new this.userModel(user);
-        return await doc.save();
+    async createUser(email, password, name, roles = ['admin']) {
+        const passwordHash = await bcrypt.hash(password, 10);
+        const user = new this.userModel({ email: email.toLowerCase(), passwordHash, name, roles, active: true });
+        return user.save();
     }
-    async list() {
-        return this.userModel.find().select('-passwordHash').lean().exec();
+    async list(page = 1, limit = 20) {
+        const skip = (page - 1) * limit;
+        const [items, total] = await Promise.all([
+            this.userModel.find().skip(skip).limit(limit).lean().exec(),
+            this.userModel.countDocuments().exec(),
+        ]);
+        return { items, total, page, limit };
     }
-    async remove(id) {
-        return this.userModel.findByIdAndDelete(id).exec();
+    async ensureAdmin() {
+        const email = process.env.ADMIN_EMAIL || 'admin@example.com';
+        const password = process.env.ADMIN_PASSWORD || 'ChangeMe123';
+        const exists = await this.findByEmail(email);
+        if (!exists) {
+            await this.createUser(email, password, 'Admin', ['admin']);
+            console.log(`[bootstrap] created default admin: ${email}`);
+        }
     }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, mongoose_1.InjectModel)(user_schema_1.User.name)),
+    __param(0, (0, mongoose_1.InjectModel)(user_schema_1.UserModelName)),
     __metadata("design:paramtypes", [mongoose_2.Model])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map

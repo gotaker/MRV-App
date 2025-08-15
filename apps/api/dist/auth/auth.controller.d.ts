@@ -1,25 +1,31 @@
 import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
-import { LoginDto, RegisterDto } from '../common/dto/login.dto';
-import { UsersService } from '../users/users.service';
-import { JwtService } from '@nestjs/jwt';
+import { LoginDto } from '../common/dto/login.dto';
+import { RegisterDto } from '../common/dto/register.dto';
 export declare class AuthController {
-    private auth;
-    private users;
-    private jwt;
-    constructor(auth: AuthService, users: UsersService, jwt: JwtService);
+    private readonly auth;
+    constructor(auth: AuthService);
     register(body: RegisterDto): Promise<{
-        id: import("mongoose").Types.ObjectId;
+        id: any;
         email: string;
     }>;
     login(body: LoginDto, res: Response): Promise<{
         accessToken: string;
     }>;
-    refresh(req: Request): Promise<{
+    refresh(req: Request, res: Response): Promise<{
         accessToken: string;
     }>;
     logout(res: Response): Promise<{
         ok: boolean;
     }>;
-    me(req: any): Promise<any>;
+    me(req: any): {
+        id: any;
+        email: any;
+        roles: any;
+    };
+    whoami(req: any): {
+        id: any;
+        email: any;
+        roles: any;
+    };
 }

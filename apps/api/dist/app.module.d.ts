@@ -1,7 +1,7 @@
 import { OnModuleInit } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { UsersService } from './users/users.service';
 export declare class AppModule implements OnModuleInit {
-    private userModel;
-    constructor(userModel: Model<any>);
+    private readonly users;
+    constructor(users: UsersService);
     onModuleInit(): Promise<void>;
 }

@@ -17,44 +17,25 @@ const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
 const jwt_guard_1 = require("../auth/jwt.guard");
 let UsersController = class UsersController {
-    constructor(usersService) {
-        this.usersService = usersService;
+    constructor(users) {
+        this.users = users;
     }
-    async me(_params) {
-        return { message: 'Use /auth/me instead.' };
-    }
-    async list() {
-        return this.usersService.list();
-    }
-    async delete(id) {
-        await this.usersService.remove(id);
-        return { ok: true };
+    list(page = 1, limit = 20) {
+        return this.users.list(Number(page), Number(limit));
     }
 };
 exports.UsersController = UsersController;
 __decorate([
-    (0, common_1.Get)('me'),
-    __param(0, (0, common_1.Param)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "me", null);
-__decorate([
+    (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard),
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('page')),
+    __param(1, (0, common_1.Query)('limit')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
 ], UsersController.prototype, "list", null);
-__decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "delete", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)('users'),
-    (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [users_service_1.UsersService])
 ], UsersController);
 //# sourceMappingURL=users.controller.js.map
