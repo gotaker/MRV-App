@@ -1,20 +1,18 @@
-# docker-compose.https.yml — drop-in override to enable HTTPS via Traefik
 services:
   traefik:
-    image: traefik:v3.1
+    image: traefik:v3.4
     container_name: mrv-traefik
     command:
       - --providers.docker=true
       - --providers.file.filename=/etc/traefik/dynamic.yml
-      - --entrypoints.websecure.address=:4443
+      - --entrypoints.websecure.address=:4443     # inside container
       - --api.dashboard=true
       - --serversTransport.insecureSkipVerify=true
     ports:
-      - "4443:4443" # was "443:443"
-      - "8080:8080"   # dashboard
+      - "4443:4443"                               # host:container
+      - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
       - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
       - ./certs:/certs:ro
     depends_on:
@@ -25,19 +23,19 @@ services:
   web:
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.web.rule=Host(`localhost`)"
+      - "traefik.http.routers.web.rule=Host(`localhost`) || Host(`127.0.0.1`)"
       - "traefik.http.routers.web.entrypoints=websecure"
       - "traefik.http.routers.web.tls=true"
       - "traefik.http.services.web.loadbalancer.server.port=4200"
-      - "traefik.http.routers.web.priority=1"  # broader catch-all after /api
+      - "traefik.http.routers.web.priority=1"
 
   api:
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`localhost`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.api.rule=(Host(`localhost`) || Host(`127.0.0.1`)) && PathPrefix(`/api`)"
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.tls=true"
       - "traefik.http.services.api.loadbalancer.server.port=3000"
       - "traefik.http.middlewares.api-strip.stripprefix.prefixes=/api"
       - "traefik.http.routers.api.middlewares=api-strip"
-      - "traefik.http.routers.api.priority=100"  # more specific than web
+      - "traefik.http.routers.api.priority=100"
