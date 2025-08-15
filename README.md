@@ -1,139 +1,6 @@
-# MRV App
+# MRV App (Angular 20 + NestJS + MongoDB 8)
 
 A modern, production-grade **MRV** (Measurement, Reporting & Verification) web application for GHG emissions.
-
-
-# System Functional Flow
-flowchart LR
-  user([Analyst / Admin User]) -->|HTTPS| web[Web App (Angular 20)]
-
-  subgraph API [API (NestJS 10)]
-    direction LR
-    auth[Auth & RBAC\n- JWT Access\n- Refresh Cookie\n- Guards/Decorators]
-    users[User Admin\n- Create/Disable/Reset\n- Roles]
-    catalog[Factor Catalog\n- Factors/Units/Sources\n- Versioning & Traceability]
-    ingest[Activity Ingestion\n- Upload/Validate/Map\n- Job Status & Errors]
-    calc[Calculation Engine\n- Scope 1/2/3\n- CO₂e & Uncertainty\n- Recompute Strategy]
-    report[Inventory & Reporting\n- Org/Project/Asset\n- Period Reports & Exports]
-    audit[Audit Log\n- Inputs/Outputs/Actor\n- Reproducibility]
-  end
-
-  subgraph DataStores [Data Stores]
-    direction TB
-    mongo[(MongoDB 8\nUsers/Factors/Activity/Results/Audit)]
-    obj[(Object Storage\nMinIO/S3: Uploads & Exports)]
-  end
-
-  %% Flows
-  web -->|/auth/login /refresh /me| auth
-  auth --> users
-  auth --> catalog
-  auth --> ingest
-  auth --> calc
-  auth --> report
-
-  catalog <--> mongo
-  web -->|Presigned upload| ingest
-  ingest --> obj
-  ingest --> mongo
-
-  calc --> mongo
-  calc --> audit --> mongo
-
-  report --> mongo
-  report --> obj
-  report --> web
-
-  %% Notifications
-  users -->|Invites/Resets| smtp[SMTP (Mailhog/SES)]
-
-  %% Production hints (dashed)
-  web -.-> cdn[CDN (CloudFront) – prod]
-  auth -.-> ecs[ECS Fargate/ALB – prod]
-
-
-
-## Data Pipeline Flow (Ingestion → Validation → Calculation → Reporting)
-
-flowchart LR
-  user([Analyst]) --> web[Web App (Angular)]
-
-  subgraph Storage
-    obj[(Object Storage\nMinIO/S3)]
-    mongo[(MongoDB 8)]
-  end
-
-  subgraph Ingestion["Ingestion Service"]
-    direction LR
-    up[Upload File\nCSV/XLSX/API] --> val[Validate Schema\nTypes/Units/Ranges]
-    val --> map[Map Fields\nTemplates/Profiles]
-    map --> store1[Store Valid Rows]
-    map --> err[Collect Errors\nRow-level CSV]
-  end
-
-  web -->|Presigned PUT| obj
-  up --> obj
-  store1 --> mongo
-  err --> obj
-
-  subgraph Engine["Calculation Engine"]
-    direction LR
-    pick[Resolve Factors\nVersioned Catalog]
-    compute[Compute CO₂e\nScope 1/2/3\nUncertainty]
-    audit[Write Audit Trail]
-    pick --> compute --> audit
-  end
-
-  mongo --> pick
-  compute --> res[Results -> Mongo]
-
-  subgraph Reporting["Inventory & Reporting"]
-    direction LR
-    inv[Inventory Views\nOrg/Project/Asset]
-    exp[Exports\nCSV/XLSX/PDF]
-  end
-
-  res --> inv
-  inv --> web
-  exp --> obj
-  web -->|Download| obj
-
-## Architecture (dev env)
-
-```mermaid
-flowchart LR
-  A[Browser] -- HTTPS --> T((Traefik/Caddy))
-  subgraph Docker Network
-    T -- "/" --> W[Angular Dev Server :4200]
-    T -- "/api/*" --> N[NestJS API :3000]
-    N --- M[(MongoDB 8)]
-    X[Mongo Express :8081] --- M
-  end
-```
-
-**Notes**
-- `/` → Angular dev server (supports HMR/WebSockets)
-- `/api` → NestJS API; refresh cookie is `httpOnly`, `SameSite=Lax`, `Secure` in HTTPS
-
----
-
-## Project Layout (top-level)
-```
-dev-env/
-├─ apps/
-│  ├─ web/      # Angular 20 (standalone components)
-│  └─ api/      # NestJS 10 API (auth, users, health)
-├─ docker-compose.yml
-├─ docker-compose.https.yml   # Traefik profile
-├─ Caddyfile                  # Optional local HTTPS via Caddy
-├─ traefik/                   # Traefik config
-├─ certs/                     # mkcert output (localhost.pem/key)
-├─ .env                       # CORS_ORIGIN, COOKIE_SECURE, ADMIN_* etc.
-├─ .nvmrc                     # 20.19.0
-└─ .npmrc                     # engine-strict=true
-```
-
-
 
 - **Frontend**: Angular **20.1.7** (CLI **20.1.6**), TypeScript **5.8.3**, Zone.js **0.15.x**
 - **API**: NestJS **10**, Mongoose **8** (MongoDB **8**)
@@ -199,6 +66,108 @@ flowchart LR
 **Notes**
 - `/` → Angular dev server (supports HMR/WebSockets)
 - `/api` → NestJS API; refresh cookie is `httpOnly`, `SameSite=Lax`, `Secure` in HTTPS
+
+---
+
+## System Functional Flow
+
+```mermaid
+flowchart LR
+  user([Analyst / Admin User]) -->|HTTPS| web[Web App (Angular 20)]
+
+  subgraph API [API (NestJS 10)]
+    direction LR
+    auth[Auth & RBAC\n- JWT Access\n- Refresh Cookie\n- Guards/Decorators]
+    users[User Admin\n- Create/Disable/Reset\n- Roles]
+    catalog[Factor Catalog\n- Factors/Units/Sources\n- Versioning & Traceability]
+    ingest[Activity Ingestion\n- Upload/Validate/Map\n- Job Status & Errors]
+    calc[Calculation Engine\n- Scope 1/2/3\n- CO₂e & Uncertainty\n- Recompute Strategy]
+    report[Inventory & Reporting\n- Org/Project/Asset\n- Period Reports & Exports]
+    audit[Audit Log\n- Inputs/Outputs/Actor\n- Reproducibility]
+  end
+
+  subgraph DataStores [Data Stores]
+    direction TB
+    mongo[(MongoDB 8\nUsers/Factors/Activity/Results/Audit)]
+    obj[(Object Storage\nMinIO/S3: Uploads & Exports)]
+  end
+
+  %% Flows
+  web -->|/auth/login /refresh /me| auth
+  auth --> users
+  auth --> catalog
+  auth --> ingest
+  auth --> calc
+  auth --> report
+
+  catalog <--> mongo
+  web -->|Presigned upload| ingest
+  ingest --> obj
+  ingest --> mongo
+
+  calc --> mongo
+  calc --> audit --> mongo
+
+  report --> mongo
+  report --> obj
+  report --> web
+
+  %% Notifications
+  users -->|Invites/Resets| smtp[SMTP (Mailhog/SES)]
+
+  %% Production hints (dashed)
+  web -.-> cdn[CDN (CloudFront) – prod]
+  auth -.-> ecs[ECS Fargate/ALB – prod]
+```
+
+---
+
+## Data Pipeline Flow (Ingestion → Validation → Calculation → Reporting)
+
+```mermaid
+flowchart LR
+  user([Analyst]) --> web[Web App (Angular)]
+
+  subgraph Storage
+    obj[(Object Storage\nMinIO/S3)]
+    mongo[(MongoDB 8)]
+  end
+
+  subgraph Ingestion["Ingestion Service"]
+    direction LR
+    up[Upload File\nCSV/XLSX/API] --> val[Validate Schema\nTypes/Units/Ranges]
+    val --> map[Map Fields\nTemplates/Profiles]
+    map --> store1[Store Valid Rows]
+    map --> err[Collect Errors\nRow-level CSV]
+  end
+
+  web -->|Presigned PUT| obj
+  up --> obj
+  store1 --> mongo
+  err --> obj
+
+  subgraph Engine["Calculation Engine"]
+    direction LR
+    pick[Resolve Factors\nVersioned Catalog]
+    compute[Compute CO₂e\nScope 1/2/3\nUncertainty]
+    audit[Write Audit Trail]
+    pick --> compute --> audit
+  end
+
+  mongo --> pick
+  compute --> res[Results -> Mongo]
+
+  subgraph Reporting["Inventory & Reporting"]
+    direction LR
+    inv[Inventory Views\nOrg/Project/Asset]
+    exp[Exports\nCSV/XLSX/PDF]
+  end
+
+  res --> inv
+  inv --> web
+  exp --> obj
+  web -->|Download| obj
+```
 
 ---
 
