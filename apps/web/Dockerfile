@@ -1,10 +1,11 @@
 # Web Dockerfile (Angular 20 dev)
-FROM node:20-alpine
+ARG NODE_VERSION=20-alpine
+FROM node:${NODE_VERSION}
 
 WORKDIR /usr/src/app
 
 # Install Angular CLI
-RUN npm i -g @angular/cli@20.1.7
+RUN npm i -g @angular/cli@20.1.6
 
 COPY package.json angular.json tsconfig.json tsconfig.app.json ./
 RUN npm install

@@ -1,5 +1,6 @@
 # API Dockerfile
-FROM node:20-alpine
+ARG NODE_VERSION=20-alpine
+FROM node:${NODE_VERSION}
 
 WORKDIR /usr/src/app
 
