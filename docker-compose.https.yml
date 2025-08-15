@@ -6,11 +6,11 @@ services:
     command:
       - --providers.docker=true
       - --providers.file.filename=/etc/traefik/dynamic.yml
-      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.address=:4443
       - --api.dashboard=true
       - --serversTransport.insecureSkipVerify=true
     ports:
-      - "443:443"
+      - "4443:4443" # was "443:443"
       - "8080:8080"   # dashboard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
