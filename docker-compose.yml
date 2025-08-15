@@ -84,6 +84,7 @@ services:
       - "${API_PORT:-3000}:3000"
     volumes:
       - ./apps/api:/usr/src/app
+      - api_node_modules:/usr/src/app/node_modules
     command: ["npm", "run", "start:dev"]
     depends_on:
       mongo:
@@ -108,6 +109,7 @@ services:
       - "4200:4200"
     volumes:
       - ./apps/web:/usr/src/app
+      - web_node_modules:/usr/src/app/node_modules
     command: ["npm", "run", "start"]
     depends_on:
       - api
@@ -115,3 +117,5 @@ services:
 volumes:
   mongo-data:
   minio-data:
+  web_node_modules:
+  api_node_modules:

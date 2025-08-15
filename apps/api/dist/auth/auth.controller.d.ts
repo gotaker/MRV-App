@@ -9,14 +9,14 @@ export declare class AuthController {
     private jwt;
     constructor(auth: AuthService, users: UsersService, jwt: JwtService);
     register(body: RegisterDto): Promise<{
-        id: any;
-        email: any;
+        id: import("mongoose").Types.ObjectId;
+        email: string;
     }>;
     login(body: LoginDto, res: Response): Promise<{
-        accessToken: any;
+        accessToken: string;
     }>;
     refresh(req: Request): Promise<{
-        accessToken: any;
+        accessToken: string;
     }>;
     logout(res: Response): Promise<{
         ok: boolean;
