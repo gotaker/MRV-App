@@ -6,11 +6,10 @@ services:
     command:
       - --providers.docker=true
       - --providers.file.filename=/etc/traefik/dynamic.yml
-      - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --api.dashboard=true
+      - --serversTransport.insecureSkipVerify=true
     ports:
-      - "80:80"
       - "443:443"
       - "8080:8080"   # dashboard
     volumes:
@@ -30,6 +29,7 @@ services:
       - "traefik.http.routers.web.entrypoints=websecure"
       - "traefik.http.routers.web.tls=true"
       - "traefik.http.services.web.loadbalancer.server.port=4200"
+      - "traefik.http.routers.web.priority=1"  # broader catch-all after /api
 
   api:
     labels:
@@ -37,6 +37,7 @@ services:
       - "traefik.http.routers.api.rule=Host(`localhost`) && PathPrefix(`/api`)"
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.tls=true"
-      - "traefik.http.routers.api.middlewares=api-strip"
-      - "traefik.http.middlewares.api-strip.stripprefix.prefixes=/api"
       - "traefik.http.services.api.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.api-strip.stripprefix.prefixes=/api"
+      - "traefik.http.routers.api.middlewares=api-strip"
+      - "traefik.http.routers.api.priority=100"  # more specific than web
