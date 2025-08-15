@@ -22,7 +22,12 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": { "browserTarget": "mrv-web:build" }
+          "options": {
+            "buildTarget": "mrv-web:build",
+            "host": "0.0.0.0",
+            "port": 4200,
+            "proxyConfig": "proxy.conf.json"
+          }
         }
       }
     }
