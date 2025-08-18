@@ -30,16 +30,16 @@
     "@angular/router": "^20.1.0",
     "rxjs": "^7.8.1",
     "tslib": "^2.6.3",
-    "zone.js": "^0.14.10"
+    "zone.js": "^0.15.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^20.1.0",
-    "@angular/cli": "^20.1.0",
-    "@angular/compiler-cli": "^20.1.0",
     "@angular-eslint/builder": "^20.0.0",
     "@angular-eslint/eslint-plugin": "^20.0.0",
     "@angular-eslint/eslint-plugin-template": "^20.0.0",
     "@angular-eslint/template-parser": "^20.0.0",
+    "@angular/cli": "^20.1.0",
+    "@angular/compiler-cli": "^20.1.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^22.1.0",
     "cypress": "^13.13.1",
