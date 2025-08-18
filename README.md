@@ -1,4 +1,4 @@
-# MRV — Angular 20 + Material 3 (GitHub-ready)
+# MRV — Angular 20
 
 Production-ready starter: Angular 20, Material 3 (MDC), Jest, Cypress, ESLint (flat), Prettier, Husky,
 Docker (prod), Docker (dev), and GitHub Actions (CI + AWS S3/CloudFront deploy).
