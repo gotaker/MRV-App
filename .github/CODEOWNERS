@@ -1,0 +1,7 @@
+# CODEOWNERS — adjust handles to your org/user
+# Example: @your-org/frontend and @your-org/devops are teams or users.
+*                     @your-org/frontend @your-org/devops
+/src/                 @your-org/frontend
+/.github/             @your-org/devops
+/scripts/             @your-org/devops
+/docs/                @your-org/frontend
