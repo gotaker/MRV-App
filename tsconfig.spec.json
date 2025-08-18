@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc",
+    "types": [
+      "jest",
+      "node"
+    ]
+  },
+  "files": [
+    "src/test-setup.ts"
+  ]
+}

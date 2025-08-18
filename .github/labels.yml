@@ -1,0 +1,14 @@
+- name: bug
+  color: d73a4a
+- name: feature
+  color: a2eeef
+- name: epic
+  color: 5319e7
+- name: chore
+  color: cccccc
+- name: documentation
+  color: 0075ca
+- name: test
+  color: 0e8a16
+- name: design
+  color: fbca04

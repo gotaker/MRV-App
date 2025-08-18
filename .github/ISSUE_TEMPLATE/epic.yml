@@ -1,0 +1,13 @@
+name: Epic
+description: Track an epic
+labels: [epic]
+body:
+  - type: textarea
+    id: goal
+    attributes: { label: Goal }
+  - type: textarea
+    id: scope
+    attributes: { label: Scope }
+  - type: textarea
+    id: deliverables
+    attributes: { label: Deliverables }

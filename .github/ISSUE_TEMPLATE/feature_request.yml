@@ -1,0 +1,11 @@
+name: Feature request
+description: Propose a feature
+labels: [feature]
+body:
+  - type: textarea
+    id: summary
+    attributes: { label: Summary, description: What problem does this solve? }
+    validations: { required: true }
+  - type: textarea
+    id: acceptance
+    attributes: { label: Acceptance Criteria, description: Bullet list of criteria }
