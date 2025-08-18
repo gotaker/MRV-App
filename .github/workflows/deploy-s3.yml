@@ -1,0 +1,2 @@
+name: Deploy S3 + CloudFront
+on: {workflow_dispatch: null}

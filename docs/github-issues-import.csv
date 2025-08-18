@@ -1,0 +1,4 @@
+Title,Body,Labels,Milestone
+M0: Initialize repo scaffold,Create Angular 20 workspace,chore,M0 — Repo & CI
+M1: Upgrade Angular core to v20,Run ng update,feature,M1 — Angular 20 Baseline
+M2: Material 3 theming,Implement theme.scss,design, M2 — Material 3 UX
