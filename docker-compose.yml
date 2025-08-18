@@ -14,7 +14,6 @@ services:
       - ./:/app
       - /app/node_modules
     command: ["npx","ng","serve","--host","0.0.0.0","--port","4200","--poll","2000"]
-
   mock-api:
     image: ghcr.io/typicode/json-server:latest
     container_name: mrv-mock-api
@@ -23,7 +22,6 @@ services:
     command: ["--host","0.0.0.0","--port","3000","/data/db.json"]
     ports:
       - "3000:3000"
-
   e2e:
     image: cypress/included:13.13.1
     container_name: mrv-e2e

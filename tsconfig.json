@@ -1,8 +1,21 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    "target": "es2022",
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "module": "es2022",
     "moduleResolution": "bundler",
-    "strict": true
+    "target": "es2022",
+    "useDefineForClassFields": false,
+    "types": [
+      "node",
+      "jest"
+    ]
   }
 }

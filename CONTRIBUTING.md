@@ -1,36 +1,14 @@
 # Contributing
 
-Thanks for helping improve MRV!
+- Use Node 20 (`nvm use 20`), `npm ci`
+- Conventional Commits (feat/fix/chore/docs/style/refactor/test/ci/build)
+- Lint before commit, tests green
+- Angular standalone APIs; signals preferred; lazy routes
 
-## Prerequisites
-- Node 20 (`nvm use 20`) and npm v10+
-- Angular CLI globally optional
-- GitHub CLI `gh` (for scripts)
-
-## Dev Workflow
 ```bash
 npm ci
-npm start            # dev server
-npm run lint         # ESLint (flat)
-npm run test         # Jest
-npm run e2e          # Cypress (optional)
+npm start
+npm run lint
+npm test
+npm run e2e
 ```
-
-## Branch & Commit
-- Branch: `feat/<scope>`, `fix/<scope>`, `chore/<scope>`
-- **Conventional Commits**:
-  - `feat(material): add M3 dark mode toggle`
-  - `fix(api): handle 401 on token refresh`
-  - `chore(ci): add deploy job`
-
-## Pull Requests
-- Fill PR template, link Issues
-- Unit tests updated; e2e where relevant
-- Lint passes (`npm run lint`)
-
-## Code Style
-- ESLint flat config + Prettier
-- Angular standalone APIs; prefer signals; lazy routes
-
-## Security
-- See `SECURITY.md`. Do not include secrets in code or logs.
