@@ -6,13 +6,14 @@ services:
     container_name: mrv-web
     ports:
       - "4200:4200"
+      - "443:4200"    # access via https://localhost
     environment:
       - CHOKIDAR_USEPOLLING=true
       - NG_CLI_ANALYTICS=false
     volumes:
       - ./:/app
       - /app/node_modules
-    command: ["npx","ng","serve","--host","0.0.0.0","--port","4200","--poll","2000"]
+    command: ["npx","ng","serve","--host","0.0.0.0","--port","4200","--poll","2000","--ssl","--ssl-cert","/app/certs/dev-cert.pem","--ssl-key","/app/certs/dev-key.pem"]
 
   mock-api:
     image: clue/json-server:latest

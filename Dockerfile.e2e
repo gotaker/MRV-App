@@ -1,0 +1,14 @@
+# Dockerfile.e2e — Node 22 runner for Cypress
+FROM node:22-bookworm
+
+# System deps for Cypress (Chromium) inside container
+RUN apt-get update && apt-get install -y   libgtk2.0-0 libgtk-3-0 libgbm1 libnotify-dev libgconf-2-4 libnss3   libxss1 libasound2 fonts-liberation libatk-bridge2.0-0 libxkbcommon0   libxshmfence1 xvfb wget ca-certificates &&   rm -rf /var/lib/apt/lists/*
+
+WORKDIR /e2e
+
+# Install project dev deps (including Cypress) from your repo's package*.json
+COPY package*.json ./
+RUN npm ci || npm install
+
+# Pre-verify Cypress to cache binary (optional)
+RUN npx cypress verify || (npx cypress install && npx cypress verify)
