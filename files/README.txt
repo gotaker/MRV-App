@@ -1,34 +1,30 @@
-# Jest Fix Bundle v3 (modern setup + strict Jest types)
+# Jest Fix Bundle v4 (no global-setup, explicit zone setup, alias expect)
 
-This bundle:
-- Uses `setupZoneTestEnv` via `setup-jest.cjs` (no deprecated setup-jest.js).
-- Drops `globalSetup` (ngcc) which is not needed for Angular 16+.
-- Restricts test TS types to **Jest** to avoid Chai/Jasmine conflicts.
-- Explicitly imports `expect` from `@jest/globals` in the KPI spec to disambiguate.
+## Files
+- jest.config.cjs (no globalSetup, no deprecated setup-jest.js)
+- setup-jest.cjs (calls setupZoneTestEnv)
+- tsconfig.spec.json (limits types to Jest + Node)
+- src/test-setup.ts (minimal)
+- src/app/kpis/kpis.service.spec.ts (uses alias 'jestExpect')
 
-## Apply (from repo root)
-```powershell
-Expand-Archive jest-fix-bundle-v3.zip -DestinationPath . -Force
-Copy-Item .\jest-fix-bundle-v3\files\* . -Recurse -Force
+## Apply (PowerShell)
+Expand-Archive jest-fix-bundle-v4.zip -DestinationPath . -Force
+Copy-Item .\jest-fix-bundle-v4\files\* . -Recurse -Force
 
-# Ensure no other Jest configs shadow this one
-if (Test-Path jest.config.ts) { Rename-Item jest.config.ts jest.config.ts.bak }
-if (Test-Path jest.config.js) { Rename-Item jest.config.js jest.config.js.bak }
+# Ensure only CJS config is active
+if (Test-Path jest.config.ts) { Rename-Item jest.config.ts jest.config.ts.bak -Force }
+if (Test-Path jest.config.js) { Rename-Item jest.config.js jest.config.js.bak -Force }
+npm pkg set scripts.test="jest --config=jest.config.cjs"
 
-# Pin compatible toolchain
+# Pin toolchain (adjust if already present)
 npm i -D jest@29.7.0 jest-environment-jsdom@29.7.0 jest-preset-angular@14.6.1 @babel/preset-env@^7.25.0 @babel/preset-typescript@^7.25.0
 
-# Remove conflicting types (if present)
-npm remove @types/chai chai @types/jasmine jasmine-core
-```
+# Remove conflicting test frameworks/types
+npm remove @types/chai chai @types/jasmine jasmine-core 2>$null
 
-Run:
-```powershell
+# Clear cache & run
 npx jest --clearCache
-npm run test -- --config=jest.config.cjs --passWithNoTests --coverage
-```
+npm run test -- --passWithNoTests --coverage
 
-## Commit message
-```
-test(jest): modern setup-zone env; restrict types to Jest; disambiguate expect; update KPI spec
-```
+## Commit
+test(jest): drop global-setup; modern zone setup; restrict types; alias expect; fix KPI spec

@@ -2,9 +2,7 @@
 module.exports = {
   preset: 'jest-preset-angular',
   testEnvironment: 'jsdom',
-  globalSetup: 'jest-preset-angular/global-setup',
-  // Load Angular testing env exactly once here:
-  setupFilesAfterEnv: ['jest-preset-angular/setup-jest', '<rootDir>/src/test-setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/setup-jest.cjs', '<rootDir>/src/test-setup.ts'],
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },

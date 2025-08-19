@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
-import { describe, it, beforeEach, afterEach, expect } from '@jest/globals';
+import { describe, it, beforeEach, afterEach, expect as jestExpect } from '@jest/globals';
 
 import { KpisService } from './kpis.service';
 
@@ -26,6 +26,6 @@ describe('KpisService', () => {
   });
 
   it('should be created', () => {
-    expect(svc).toBeTruthy();
+    jestExpect(svc).toBeTruthy();
   });
 });

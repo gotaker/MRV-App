@@ -1,2 +1,1 @@
-// Keep this file for custom per-test helpers (matchers, spies).
-// Do NOT import 'jest-preset-angular/setup-jest' here; it's loaded from setup-jest.cjs.
+// Optional custom matchers/helpers go here. Do not import the Angular preset here.
