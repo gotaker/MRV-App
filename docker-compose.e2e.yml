@@ -1,23 +1,25 @@
-# docker-compose.e2e.yml — overlay that replaces the e2e service to use Node 22 and image tags
+# docker-compose.e2e.yml — overlay (updated) waits for the web server before running Cypress
 services:
   e2e:
     build:
       context: .
       dockerfile: Dockerfile.e2e
       args:
-        BUILD_VERSION: ${APP_VERSION}
-        BUILD_COMMIT: ${GIT_COMMIT}
-        BUILD_DATE: ${BUILD_DATE}
-        VCS_URL: ${VCS_URL}
-    image: ${REGISTRY}/${IMAGE_NAMESPACE}/${APP_NAME}-e2e:${APP_VERSION}
+        BUILD_VERSION: ${APP_VERSION:-dev}
+        BUILD_COMMIT: ${GIT_COMMIT:-dev}
+        BUILD_DATE: ${BUILD_DATE:-unknown}
+        VCS_URL: ${VCS_URL:-https://example.com/repo}
+    image: ${REGISTRY:-ghcr.io}/${IMAGE_NAMESPACE:-local}/${APP_NAME:-mrv}-e2e:${APP_VERSION:-dev}
     container_name: mrv-e2e
     depends_on:
       - web
     working_dir: /e2e
     environment:
-      - CYPRESS_baseUrl=http://web:4200
-      # - CYPRESS_baseUrl=https://web:4200
-      # - NODE_TLS_REJECT_UNAUTHORIZED=0
+      # If you enabled SSL for ng serve, switch to https and set NODE_TLS_REJECT_UNAUTHORIZED=0
+      # CYPRESS_baseUrl=http://web:4200
+      - CYPRESS_baseUrl=https://web:4200
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
     volumes:
       - ./:/e2e
-    entrypoint: [ "bash", "-lc", "npm ci || npm install; npx cypress run" ]
+    # Wait for the dev server to be reachable, then run Cypress
+    entrypoint: [ "bash", "-lc", "npm ci || npm install; npx --yes wait-on https-get://web:4200 --timeout 300000 && npx cypress run" ]
