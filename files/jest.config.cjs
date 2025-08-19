@@ -3,13 +3,13 @@ module.exports = {
   preset: 'jest-preset-angular',
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  testMatch: ['**/?(*.)+(spec).ts'],
-  moduleFileExtensions: ['ts', 'html', 'js'],
+  globalSetup: 'jest-preset-angular/global-setup',
   transform: {
-    '^.+\\.(ts|html)$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json', stringifyContentPathRegex: '\\.html$' }],
-    '^.+\\.(mjs|js)$': 'babel-jest'
+    '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },
   transformIgnorePatterns: [
     'node_modules/(?!.*\\.m?js$)',
   ],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/files/'],
+  moduleFileExtensions: ['ts', 'js', 'html'],
 };
