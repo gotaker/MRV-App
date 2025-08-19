@@ -1,16 +1,27 @@
-# E2E Overlay — Wait for Web
+# E2E Timeout Fix
 
-This overlay updates the `e2e` service to wait for `http://web:4200` to be reachable before running Cypress.
+Cypress started before the dev server was reachable. This patch changes the e2e overlay to wait on the **TCP port** instead of an HTTP/HTTPS probe, so it works regardless of SSL.
 
-## Use
+## Usage
+
+HTTP dev server (default):
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.e2e.yml up --build e2e
 ```
 
-For HTTPS dev server, edit the overlay:
+HTTPS dev server:
 ```yaml
+# in docker-compose.e2e.yml (uncomment)
 environment:
   - CYPRESS_baseUrl=https://web:4200
   - NODE_TLS_REJECT_UNAUTHORIZED=0
-entrypoint: [ "bash", "-lc", "npm ci || npm install; npx --yes wait-on https-get://web:4200 --timeout 300000 && npx cypress run" ]
 ```
+Command already waits on `tcp:web:4200`, so no change needed there.
+
+## Optional: Healthcheck overlay
+
+You can also add a healthcheck to `web` and wait on it:
+```bash
+docker compose -f docker-compose.yml -f docker-compose.health.yml -f docker-compose.e2e.yml up --build e2e
+```
+Set `HEALTH_URL` to `https://localhost:4200` if using SSL (ng serve), or leave default `http://localhost:4200`.

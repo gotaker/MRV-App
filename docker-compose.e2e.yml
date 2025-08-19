@@ -1,4 +1,4 @@
-# docker-compose.e2e.yml — overlay (updated) waits for the web server before running Cypress
+# docker-compose.e2e.yml — overlay that waits on TCP so HTTP/HTTPS doesn't matter
 services:
   e2e:
     build:
@@ -15,11 +15,12 @@ services:
       - web
     working_dir: /e2e
     environment:
-      # If you enabled SSL for ng serve, switch to https and set NODE_TLS_REJECT_UNAUTHORIZED=0
-      # CYPRESS_baseUrl=http://web:4200
-      - CYPRESS_baseUrl=https://web:4200
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      # Default to HTTP unless you explicitly enable SSL in the web service
+      - CYPRESS_baseUrl=http://web:4200
+      # If you enabled SSL on ng serve, uncomment the two below:
+      # - CYPRESS_baseUrl=https://web:4200
+      # - NODE_TLS_REJECT_UNAUTHORIZED=0
     volumes:
       - ./:/e2e
-    # Wait for the dev server to be reachable, then run Cypress
-    entrypoint: [ "bash", "-lc", "npm ci || npm install; npx --yes wait-on https-get://web:4200 --timeout 300000 && npx cypress run" ]
+    # Wait for the port to open (works for both HTTP and HTTPS), then run Cypress
+    entrypoint: [ "bash", "-lc", "npm ci || npm install; npx --yes wait-on tcp:web:4200 --timeout 600000 && npx cypress run" ]
