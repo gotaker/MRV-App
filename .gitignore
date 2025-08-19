@@ -6,3 +6,4 @@ coverage
 *.log
 .cypress-cache
 .husky/_
+NUL
