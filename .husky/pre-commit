@@ -1,5 +1,10 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+# husky (v9+) pre-commit
+# run staged lint if available, otherwise full lint
+npm run -s lint-staged 2> NUL || npm run -s lint
 
-npm run lint --silent || true
-npx lint-staged
+#On macOS/Linux, 2> /dev/null is fine too
+
+# optional: run unit tests (skip if none)
+npm run -s test -- --passWithNoTests
+
+
