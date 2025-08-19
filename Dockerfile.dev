@@ -1,6 +1,26 @@
+# Dockerfile.dev — dev image with OCI labels
 FROM node:22-bookworm
+
 WORKDIR /app
 COPY package*.json ./
+
+ARG BUILD_VERSION=0.0.0-dev
+ARG BUILD_COMMIT=dev
+ARG BUILD_DATE=unknown
+ARG VCS_URL=https://example.com/repo
+
+LABEL org.opencontainers.image.title="MRV Web (dev)" \
+      org.opencontainers.image.description="Development image for MRV Angular app" \
+      org.opencontainers.image.version="${BUILD_VERSION}" \
+      org.opencontainers.image.revision="${BUILD_COMMIT}" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.source="${VCS_URL}"
+
+# Install dependencies (lockfile preferred)
 RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+# Copy source (bind mount in compose will override for fast reload)
+COPY . .
+
 EXPOSE 4200
-CMD [ "npx", "ng", "serve", "--host", "0.0.0.0", "--port", "4200", "--poll", "2000" ]
+CMD ["npx","ng","serve","--host","0.0.0.0","--port","4200","--poll","2000"]

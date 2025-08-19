@@ -1,0 +1,6 @@
+Add to package.json scripts:
+{
+  "scripts": {
+    "version": "node scripts/update-env.mjs && git add .env VERSION"
+  }
+}

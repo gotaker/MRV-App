@@ -1,0 +1,30 @@
+# docker-compose.version.yml — overlay to add image tags and build args
+services:
+  web:
+    image: ${REGISTRY}/${IMAGE_NAMESPACE}/${APP_NAME}-web:${APP_VERSION}
+    build:
+      args:
+        BUILD_VERSION: ${APP_VERSION}
+        BUILD_COMMIT: ${GIT_COMMIT}
+        BUILD_DATE: ${BUILD_DATE}
+        VCS_URL: ${VCS_URL}
+    labels:
+      org.opencontainers.image.version: ${APP_VERSION}
+      org.opencontainers.image.revision: ${GIT_COMMIT}
+
+  mock-api:
+    # Not building this image; using public one. You can retag if you maintain a fork.
+    labels:
+      org.opencontainers.image.version: ${APP_VERSION}
+
+  e2e:
+    image: ${REGISTRY}/${IMAGE_NAMESPACE}/${APP_NAME}-e2e:${APP_VERSION}
+    build:
+      args:
+        BUILD_VERSION: ${APP_VERSION}
+        BUILD_COMMIT: ${GIT_COMMIT}
+        BUILD_DATE: ${BUILD_DATE}
+        VCS_URL: ${VCS_URL}
+    labels:
+      org.opencontainers.image.version: ${APP_VERSION}
+      org.opencontainers.image.revision: ${GIT_COMMIT}

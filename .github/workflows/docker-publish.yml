@@ -1,0 +1,84 @@
+name: docker-publish
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: {}
+
+env:
+  REGISTRY: ghcr.io
+  APP_NAME: mrv
+
+jobs:
+  build-and-push:
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Compute version/vars
+        id: vars
+        run: |
+          echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+          echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+          echo "date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+          echo "owner=${{ github.repository_owner }}" >> $GITHUB_OUTPUT
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push web
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.dev
+          push: true
+          tags: |
+            ghcr.io/${{ steps.vars.outputs.owner }}/${{ env.APP_NAME }}-web:${{ steps.vars.outputs.version }}
+            ghcr.io/${{ steps.vars.outputs.owner }}/${{ env.APP_NAME }}-web:${{ steps.vars.outputs.version%%.* }}.${{ steps.vars.outputs.version#*.}}
+            ghcr.io/${{ steps.vars.outputs.owner }}/${{ env.APP_NAME }}-web:sha-${{ steps.vars.outputs.short_sha }}
+            ghcr.io/${{ steps.vars.outputs.owner }}/${{ env.APP_NAME }}-web:latest
+          labels: |
+            org.opencontainers.image.title=MRV Web
+            org.opencontainers.image.version=${{ steps.vars.outputs.version }}
+            org.opencontainers.image.revision=${{ steps.vars.outputs.short_sha }}
+            org.opencontainers.image.created=${{ steps.vars.outputs.date }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          build-args: |
+            BUILD_VERSION=${{ steps.vars.outputs.version }}
+            BUILD_COMMIT=${{ steps.vars.outputs.short_sha }}
+            BUILD_DATE=${{ steps.vars.outputs.date }}
+            VCS_URL=${{ github.server_url }}/${{ github.repository }}
+
+      - name: Build & push e2e
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.e2e
+          push: true
+          tags: |
+            ghcr.io/${{ steps.vars.outputs.owner }}/${{ env.APP_NAME }}-e2e:${{ steps.vars.outputs.version }}
+            ghcr.io/${{ steps.vars.outputs.owner }}/${{ env.APP_NAME }}-e2e:sha-${{ steps.vars.outputs.short_sha }}
+          labels: |
+            org.opencontainers.image.title=MRV E2E Runner
+            org.opencontainers.image.version=${{ steps.vars.outputs.version }}
+            org.opencontainers.image.revision=${{ steps.vars.outputs.short_sha }}
+            org.opencontainers.image.created=${{ steps.vars.outputs.date }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          build-args: |
+            BUILD_VERSION=${{ steps.vars.outputs.version }}
+            BUILD_COMMIT=${{ steps.vars.outputs.short_sha }}
+            BUILD_DATE=${{ steps.vars.outputs.date }}
+            VCS_URL=${{ github.server_url }}/${{ github.repository }}

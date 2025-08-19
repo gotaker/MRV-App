@@ -1,18 +1,23 @@
-# docker-compose.e2e.yml — overlay that replaces the e2e service to use Node 22
+# docker-compose.e2e.yml — overlay that replaces the e2e service to use Node 22 and image tags
 services:
   e2e:
     build:
       context: .
       dockerfile: Dockerfile.e2e
+      args:
+        BUILD_VERSION: ${APP_VERSION}
+        BUILD_COMMIT: ${GIT_COMMIT}
+        BUILD_DATE: ${BUILD_DATE}
+        VCS_URL: ${VCS_URL}
+    image: ${REGISTRY}/${IMAGE_NAMESPACE}/${APP_NAME}-e2e:${APP_VERSION}
     container_name: mrv-e2e
     depends_on:
       - web
     working_dir: /e2e
     environment:
-      # If you enabled SSL for ng serve, switch to https and set NODE_TLS_REJECT_UNAUTHORIZED=0
-      # CYPRESS_baseUrl=http://web:4200
-      - CYPRESS_baseUrl=https://web:4200
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - CYPRESS_baseUrl=http://web:4200
+      # - CYPRESS_baseUrl=https://web:4200
+      # - NODE_TLS_REJECT_UNAUTHORIZED=0
     volumes:
       - ./:/e2e
     entrypoint: [ "bash", "-lc", "npm ci || npm install; npx cypress run" ]
