@@ -2,17 +2,43 @@
 
 @include mat.core();
 
-$light-theme: mat.define-theme((
-  color: (theme-type: light, primary: mat.$indigo-palette, tertiary: mat.$pink-palette),
-  density: 0,
-  typography: (brand-family: 'Inter, Roboto, Arial, sans-serif', plain-family: 'Inter, Roboto, Arial, sans-serif')
-));
+$light-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$indigo-palette,
+      tertiary: mat.$pink-palette,
+    ),
+    density: -1,
+    // -1 or -2 for tighter layouts,
+    typography: (
+        brand-family: 'Inter, Roboto, Arial, sans-serif',
+        plain-family: 'Inter, Roboto, Arial, sans-serif',
+      ),
+  )
+);
 
-$dark-theme: mat.define-theme((
-  color: (theme-type: dark, primary: mat.$indigo-palette, tertiary: mat.$pink-palette),
-  density: 0,
-  typography: (brand-family: 'Inter, Roboto, Arial, sans-serif', plain-family: 'Inter, Roboto, Arial, sans-serif')
-));
+$dark-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: dark,
+      primary: mat.$indigo-palette,
+      tertiary: mat.$pink-palette,
+    ),
+    density: -1,
+    // -1 or -2 for tighter layouts,
+    typography: (
+        brand-family: 'Inter, Roboto, Arial, sans-serif',
+        plain-family: 'Inter, Roboto, Arial, sans-serif',
+      ),
+  )
+);
 
-:root { @include mat.all-component-themes($light-theme); @include mat.typography-hierarchy($light-theme); }
-.dark-theme { @include mat.all-component-colors($dark-theme); @include mat.typography-hierarchy($dark-theme); }
+:root {
+  @include mat.all-component-themes($light-theme);
+  @include mat.typography-hierarchy($light-theme);
+}
+.dark-theme {
+  @include mat.all-component-colors($dark-theme);
+  @include mat.typography-hierarchy($dark-theme);
+}
