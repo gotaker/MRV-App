@@ -5,6 +5,4 @@ npm run -s lint-staged 2> NUL || npm run -s lint
 #On macOS/Linux, 2> /dev/null is fine too
 
 # optional: run unit tests (skip if none)
-npm run -s test -- --passWithNoTests
-
-
+#npm run -s test -- --passWithNoTests

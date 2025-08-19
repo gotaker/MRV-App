@@ -5,3 +5,4 @@ setupZoneTestEnv();
 
 // (If you hit a version constraint, temporary fallback works:)
 // import 'jest-preset-angular/setup-jest';
+import 'jest-preset-angular/setup-jest';
