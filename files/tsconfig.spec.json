@@ -1,15 +1,15 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./out-tsc/spec",
-    "types": ["jest", "node"],
     "target": "ES2022",
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "emitDecoratorMetadata": false,
+    "lib": ["ES2022", "DOM"],
     "esModuleInterop": true,
+    "types": ["jest", "node"],
+    "skipLibCheck": true,
     "noEmit": true
   },
-  "files": ["src/test-setup.ts"],
-  "include": ["src/**/*.spec.ts", "src/**/*.d.ts"]
+  "include": ["src/**/*.spec.ts", "src/test-setup.ts"],
+  "exclude": ["node_modules", "dist", "files"]
 }

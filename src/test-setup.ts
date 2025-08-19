@@ -1,8 +1,2 @@
-// New API in jest-preset-angular 14+
-// Prefer zoned environment for Angular tests
-import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
-setupZoneTestEnv();
-
-// (If you hit a version constraint, temporary fallback works:)
-// import 'jest-preset-angular/setup-jest';
-import 'jest-preset-angular/setup-jest';
+// src/test-setup.ts
+// Optional place for per-test utilities (custom matchers, spies). Do NOT import the preset here.

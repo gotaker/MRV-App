@@ -1,25 +1,34 @@
-# Jest Babel Fix Bundle
+# Jest Fix Bundle v3 (modern setup + strict Jest types)
 
-This bundle adds a **Babel config** so `jest-preset-angular` can parse TypeScript syntax,
-and updates `jest.config.cjs` to ignore the extracted `/files/` directory (to avoid duplicate test runs).
+This bundle:
+- Uses `setupZoneTestEnv` via `setup-jest.cjs` (no deprecated setup-jest.js).
+- Drops `globalSetup` (ngcc) which is not needed for Angular 16+.
+- Restricts test TS types to **Jest** to avoid Chai/Jasmine conflicts.
+- Explicitly imports `expect` from `@jest/globals` in the KPI spec to disambiguate.
 
 ## Apply (from repo root)
 ```powershell
-Expand-Archive jest-babel-fix-bundle.zip -DestinationPath . -Force
-Copy-Item .\jest-babel-fix-bundle\files\* . -Recurse -Force
+Expand-Archive jest-fix-bundle-v3.zip -DestinationPath . -Force
+Copy-Item .\jest-fix-bundle-v3\files\* . -Recurse -Force
 
-# Ensure older configs don't shadow the new one
+# Ensure no other Jest configs shadow this one
 if (Test-Path jest.config.ts) { Rename-Item jest.config.ts jest.config.ts.bak }
 if (Test-Path jest.config.js) { Rename-Item jest.config.js jest.config.js.bak }
 
-# Install Babel presets used by jest-preset-angular's transformer
-npm i -D @babel/preset-env@^7.25.0 @babel/preset-typescript@^7.25.0
+# Pin compatible toolchain
+npm i -D jest@29.7.0 jest-environment-jsdom@29.7.0 jest-preset-angular@14.6.1 @babel/preset-env@^7.25.0 @babel/preset-typescript@^7.25.0
 
-# (If not already installed)
-npm i -D jest@29.7.0 jest-environment-jsdom@29.7.0 jest-preset-angular@14.6.1
+# Remove conflicting types (if present)
+npm remove @types/chai chai @types/jasmine jasmine-core
 ```
 
 Run:
 ```powershell
+npx jest --clearCache
 npm run test -- --config=jest.config.cjs --passWithNoTests --coverage
+```
+
+## Commit message
+```
+test(jest): modern setup-zone env; restrict types to Jest; disambiguate expect; update KPI spec
 ```
