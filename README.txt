@@ -1,27 +1,32 @@
-# E2E Timeout Fix
+# Jest Fix Bundle v2 (ts-jest enforced)
 
-Cypress started before the dev server was reachable. This patch changes the e2e overlay to wait on the **TCP port** instead of an HTTP/HTTPS probe, so it works regardless of SSL.
+This bundle enforces TypeScript transform via **ts-jest** (so Jest parses `: Type` syntax)
+and includes a minimal `tsconfig.spec.json`, `test-setup.ts`, and the updated KPI service spec.
 
-## Usage
+## Files
+- `jest.config.cjs` (uses ts-jest for `.ts`/`.html`, babel-jest for `.js/.mjs`)
+- `tsconfig.spec.json`
+- `src/test-setup.ts`
+- `src/app/kpis/kpis.service.spec.ts`
 
-HTTP dev server (default):
+## Apply
+Copy files into your repo (preserving paths) then install dev deps:
+
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.e2e.yml up --build e2e
+npm i -D jest@29.7.0 jest-environment-jsdom@29.7.0 jest-preset-angular@14.6.1 ts-jest@29.2.5 babel-jest@29.7.0
 ```
 
-HTTPS dev server:
-```yaml
-# in docker-compose.e2e.yml (uncomment)
-environment:
-  - CYPRESS_baseUrl=https://web:4200
-  - NODE_TLS_REJECT_UNAUTHORIZED=0
-```
-Command already waits on `tcp:web:4200`, so no change needed there.
-
-## Optional: Healthcheck overlay
-
-You can also add a healthcheck to `web` and wait on it:
+Run tests:
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.health.yml -f docker-compose.e2e.yml up --build e2e
+npm run test -- --passWithNoTests --coverage
 ```
-Set `HEALTH_URL` to `https://localhost:4200` if using SSL (ng serve), or leave default `http://localhost:4200`.
+
+If Jest still loads `jest.config.ts`, remove/rename it so only `jest.config.cjs` remains or run:
+```bash
+npm run test -- --config=jest.config.cjs
+```
+
+## Commit message
+```
+test(jest): enforce ts-jest transform; add tsconfig.spec and test-setup; fix KPI spec
+```
