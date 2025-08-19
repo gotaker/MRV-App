@@ -7,3 +7,4 @@ coverage
 .cypress-cache
 .husky/_
 NUL
+.zip
