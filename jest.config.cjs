@@ -9,4 +9,10 @@ module.exports = {
   transformIgnorePatterns: ['node_modules/(?!.*\\.m?js$)'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/', '/files/'],
   moduleFileExtensions: ['ts', 'js', 'html'],
+
+// ...existing config
+  collectCoverage: true,
+  passWithNoTests: true,
+  coverageReporters: ['text', 'lcov'],
+
 };
