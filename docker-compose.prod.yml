@@ -1,0 +1,14 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    image: mrv-web:20.1.0
+    environment:
+      API_ORIGIN: http://api:3000
+      SERVER_NAME: localhost
+    ports:
+      - "8080:80"
+  # api:
+  #   image: your-api:tag
+  #   ports: ["3000:3000"]

@@ -1,0 +1,33 @@
+server {
+  listen 80;
+  server_name ${SERVER_NAME};
+
+  root ${APP_ROOT};
+  index index.html;
+
+  # Long cache for static assets
+  location ~* \.(?:js|css|woff2?|ttf|eot|svg|png|jpg|jpeg|gif)$ {
+    add_header Cache-Control "public, max-age=31536000, immutable";
+    try_files $uri =404;
+  }
+
+  # API reverse proxy
+  location /api/ {
+    proxy_pass ${API_ORIGIN}/;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # SPA fallback
+  location / {
+    try_files $uri /index.html;
+  }
+
+  # Security headers (adjust CSP as needed)
+  add_header X-Content-Type-Options nosniff always;
+  add_header X-Frame-Options DENY always;
+  add_header Referrer-Policy strict-origin-when-cross-origin always;
+  # add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;" always;
+}

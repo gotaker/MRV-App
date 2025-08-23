@@ -1,0 +1,20 @@
+# --- Builder ---------------------------------------------------------
+FROM node:22.12.0 AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=optional
+COPY . .
+# Angular production build
+RUN npx ng build --configuration production
+
+# --- Runtime (Nginx) -------------------------------------------------
+FROM nginx:1.27-alpine
+ENV API_ORIGIN=http://api:3000     SERVER_NAME=_     APP_ROOT=/usr/share/nginx/html
+# Nginx template & entrypoint
+COPY ops/nginx/default.conf.template /etc/nginx/templates/default.conf.template
+COPY ops/entrypoint.sh /docker-entrypoint.d/99-app-env.sh
+RUN chmod +x /docker-entrypoint.d/99-app-env.sh
+# Static app
+COPY --from=build /app/dist/ /usr/share/nginx/html/
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3   CMD wget -qO- http://127.0.0.1/ || exit 1
