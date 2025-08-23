@@ -1,14 +1,12 @@
-// Material 3 theme scaffold (Angular 17+ API)
+// Angular Material 3 theme (safe palettes)
 @use '@angular/material' as mat;
 
-// Define a light theme using tokens.
 $theme: mat.define-theme(
   (
     color: (
       theme-type: light,
       primary: mat.$blue-palette,
       secondary: mat.$green-palette,
-      tertiary: mat.$pink-palette,
     ),
     typography: (),
     density: (
@@ -17,16 +15,7 @@ $theme: mat.define-theme(
   )
 );
 
-// Expose CSS variables for runtime usage.
 :root {
   @include mat.theme-vars($theme);
 }
-
-// Apply component themes.
 @include mat.all-component-themes($theme);
-
-// Example custom surface using CSS variables.
-.app-surface {
-  background: var(--md-sys-color-surface);
-  color: var(--md-sys-color-on-surface);
-}

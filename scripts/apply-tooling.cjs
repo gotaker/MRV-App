@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* apply-tooling.cjs */
 const fs = require('fs');
 const path = require('path');
 
@@ -9,24 +9,20 @@ if (!fs.existsSync(pkgPath)) {
 }
 const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 
-// engines
 pkg.engines = pkg.engines || {};
 pkg.engines.node = '22.12.x';
 pkg.engines.npm = pkg.engines.npm || '>=10';
 
-// scripts
 pkg.scripts = pkg.scripts || {};
 if (!pkg.scripts.prepare) {
   pkg.scripts.prepare = 'husky install';
 }
 
-// lint-staged config
 pkg['lint-staged'] = pkg['lint-staged'] || {
   '*.{ts,tsx,js}': ['eslint --fix', 'git add'],
   '*.{scss,css,html,md}': ['prettier --write', 'git add']
 };
 
-// devDependencies
 pkg.devDependencies = pkg.devDependencies || {};
 pkg.devDependencies['lint-staged'] = pkg.devDependencies['lint-staged'] || '^15.2.9';
 pkg.devDependencies['husky'] = pkg.devDependencies['husky'] || '^9.0.11';
