@@ -1,44 +1,29 @@
+// Angular Material 3 theme (Angular 18+ API)
 @use '@angular/material' as mat;
 
-@include mat.core();
+// Pick palettes
+$primary: mat.$blue-palette;
+$tertiary: mat.$green-palette;
 
-$light-theme: mat.define-theme(
+// Define design tokens
+$theme: mat.define-theme(
   (
     color: (
       theme-type: light,
-      primary: mat.$indigo-palette,
-      tertiary: mat.$pink-palette,
+      primary: $primary,
+      tertiary: $tertiary,
     ),
-    density: -1,
-    // -1 or -2 for tighter layouts,
-    typography: (
-        brand-family: 'Inter, Roboto, Arial, sans-serif',
-        plain-family: 'Inter, Roboto, Arial, sans-serif',
-      ),
+    typography: (),
+    density: (
+      scale: 0,
+    ),
   )
 );
 
-$dark-theme: mat.define-theme(
-  (
-    color: (
-      theme-type: dark,
-      primary: mat.$indigo-palette,
-      tertiary: mat.$pink-palette,
-    ),
-    density: -1,
-    // -1 or -2 for tighter layouts,
-    typography: (
-        brand-family: 'Inter, Roboto, Arial, sans-serif',
-        plain-family: 'Inter, Roboto, Arial, sans-serif',
-      ),
-  )
-);
-
+// Emit CSS variables for the theme
 :root {
-  @include mat.all-component-themes($light-theme);
-  @include mat.typography-hierarchy($light-theme);
-}
-.dark-theme {
-  @include mat.all-component-colors($dark-theme);
-  @include mat.typography-hierarchy($dark-theme);
-}
+  @include mat.theme($theme);
+} // <-- fix: mat.theme (not theme-vars)
+
+// Emit component themes
+@include mat.all-component-themes($theme);

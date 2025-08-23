@@ -1,8 +1,5 @@
-# husky (v9+) pre-commit
-# run staged lint if available, otherwise full lint
-npm run -s lint-staged 2> NUL || npm run -s lint
-
-#On macOS/Linux, 2> /dev/null is fine too
-
-# optional: run unit tests (skip if none)
-#npm run -s test -- --passWithNoTests
+#!/usr/bin/env sh
+# Minimal pre-commit to keep future husky v10 compatible.
+# Lint staged files and run unit tests.
+npm run lint-staged || exit 1
+npm test --silent || exit 1

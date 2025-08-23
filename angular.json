@@ -15,14 +15,8 @@
             "browser": "src/main.ts",
             "polyfills": [],
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.css",
-              "src/styles/theme.scss"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/styles.scss"],
             "inlineStyleLanguage": "scss"
           },
           "configurations": {
@@ -65,5 +59,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
