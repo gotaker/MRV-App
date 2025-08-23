@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "ng serve",
+    "start": "ng serve --ssl true --ssl-cert certs/localhost.crt --ssl-key certs/localhost.key",
     "build": "ng build",
     "build:prod": "ng build --configuration production",
     "test": "jest --config=jest.config.cjs",

@@ -488,8 +488,8 @@ import {
   ɵɵresetView,
   ɵɵrestoreView,
 } from './chunk-23AQOG4C.js';
-import './chunk-6PNJZOQ4.js';
 import './chunk-Z3F4H3BY.js';
+import './chunk-6PNJZOQ4.js';
 import './chunk-ZG272CAW.js';
 export {
   ANIMATION_MODULE_TYPE,
