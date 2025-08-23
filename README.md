@@ -1,4 +1,4 @@
-# MRV App (Angular 20 + Material 3) — Monitored, Testable, Container-ready
+# MRV App (Container-ready)
 
 A modernized MRV (Monitoring, Reporting & Verification) web app for GHG emissions, upgraded to **Angular 20**, **Material 3**, **ESLint flat config**, **Jest** unit tests, **Cypress** e2e (optional), and production-grade **Docker**/**Nginx** deployment. Includes an Angular dev-server proxy for `/api` to eliminate CORS in development, and an Nginx reverse proxy for `/api` in production.
 
