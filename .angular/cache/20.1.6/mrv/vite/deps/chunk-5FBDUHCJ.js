@@ -10,7 +10,7 @@ import {
   ɵɵattribute,
   ɵɵdefineDirective,
   ɵɵdefineNgModule,
-} from './chunk-CN63QFYK.js';
+} from './chunk-RS3MDNXH.js';
 import {
   DOCUMENT,
   InjectionToken,
@@ -18,7 +18,7 @@ import {
   signal,
   ɵɵdefineInjectable,
   ɵɵdefineInjector,
-} from './chunk-23AQOG4C.js';
+} from './chunk-LAYVZJHE.js';
 
 // node_modules/@angular/cdk/fesm2022/directionality-CChdj3az.mjs
 var DIR_DOCUMENT = new InjectionToken('cdk-dir-doc', {
@@ -222,4 +222,4 @@ var BidiModule = class _BidiModule {
 })();
 
 export { DIR_DOCUMENT, Directionality, Dir, BidiModule };
-//# sourceMappingURL=chunk-WSSLYPGO.js.map
+//# sourceMappingURL=chunk-5FBDUHCJ.js.map

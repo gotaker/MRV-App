@@ -1,3 +1,6 @@
+// Ensure Zone.js is loaded (required unless you opt into zoneless CD)
+import 'zone.js';
+
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch } from '@angular/common/http';
