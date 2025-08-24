@@ -1,21 +1,10 @@
 {
-  // "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist/out-tsc/app",
-    "types": [],
-    "module": "ES2022",
     "target": "ES2022",
     "useDefineForClassFields": false,
+    "module": "ES2022",
     "lib": ["ES2022", "DOM"],
-    "moduleResolution": "bundler"
-  },
-  "files": ["src/main.ts"],
-  "include": ["src/**/*.d.ts"],
-  "exclude": [
-    "src/test-setup.ts",
-    "src/**/*.spec.ts",
-    "cypress/**",
-    "jest.config.*",
-    "mock-api/**"
-  ]
+    "moduleResolution": "bundler",
+    "types": []
+  }
 }

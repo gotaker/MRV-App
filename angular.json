@@ -13,13 +13,16 @@
           "options": {
             "outputPath": "dist/mrv-angular20",
             "tsConfig": "tsconfig.app.json",
+            "index": "src/index.html",
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": ["src/styles.scss"],
             "inlineStyleLanguage": "scss"
           },
           "configurations": {
-            "production": { "optimization": true, "sourceMap": false },
-            "development": { "optimization": false, "sourceMap": true }
+            "development": {},
+            "production": {
+              "optimization": true
+            }
           },
           "defaultConfiguration": "development"
         },
@@ -28,12 +31,16 @@
           "options": {
             "buildTarget": "mrv-angular20:build:development",
             "port": 4200,
-            "host": "0.0.0.0",
+            "host": "127.0.0.1",
             "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
-            "production": { "buildTarget": "mrv-angular20:build:production" },
-            "development": { "buildTarget": "mrv-angular20:build:development" }
+            "development": {
+              "buildTarget": "mrv-angular20:build:development"
+            },
+            "production": {
+              "buildTarget": "mrv-angular20:build:production"
+            }
           },
           "defaultConfiguration": "development"
         }

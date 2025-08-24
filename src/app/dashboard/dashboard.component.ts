@@ -1,8 +1,3 @@
-export type LoadingState = { kind: 'loading' };
-export type ErrorState   = { kind: 'err'; msg: string };
-export type OkState<T>   = { kind: 'ok'; data: T };
-export type State<T>     = LoadingState | ErrorState | OkState<T>;
-
 import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -10,6 +5,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { KpisService, Kpi } from '../kpis/kpis.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of, startWith, map } from 'rxjs';
+
+export type LoadingState = { kind: 'loading' };
+export type ErrorState   = { kind: 'err'; msg: string };
+export type OkState<T>   = { kind: 'ok'; data: T };
+export type UiState<T>     = LoadingState | ErrorState | OkState<T>;
+
 
 @Component({
   selector: 'app-dashboard',
@@ -24,7 +25,7 @@ import { catchError, of, startWith, map } from 'rxjs';
 
       <mat-card *ngFor="let k of kpis()" appearance="outlined">
         <mat-card-header><mat-card-title>{{ k.name }}</mat-card-title></mat-card-header>
-        <mat-card-content><p style="font-size:28px;margin:8px 0">{{ k.value }}</p></mat-card-content>
+        <mat-card-content><p style="font-size:28px; margin: 8px 0;">{{ k.value }}</p></mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="error()" appearance="outlined" style="border-color:#f44336">
@@ -36,14 +37,14 @@ import { catchError, of, startWith, map } from 'rxjs';
 })
 export class DashboardComponent {
   private svc = inject(KpisService);
-
-  private state = toSignal<OkState<Kpi[]> | ErrorState | LoadingState>(
+  private state = toSignal<UiState<Kpi[]>>(
     this.svc.getKpis().pipe(
       map<Kpi[], OkState<Kpi[]>>((kpis) => ({ kind: 'ok', data: kpis })),
       catchError((e) => of<ErrorState>({ kind: 'err', msg: e?.message ?? 'Failed to load KPIs' })),
       startWith<LoadingState>({ kind: 'loading' }),
     ),
-    { initialValue: { kind: 'loading' } as LoadingState },
+    // NOTE: no { initialValue: ... } here; startWith() provides a synchronous first value;
+    //{ initialValue: { kind: 'loading' } as LoadingState },
   );
 
   loading = computed(() => this.state().kind === 'loading');
