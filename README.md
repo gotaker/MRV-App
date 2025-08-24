@@ -1,5 +1,5 @@
 # MRV App (Angular 20 + Material 3)
-This repo is a refreshed, working baseline incorporating all fixes we discussed: Angular 20, Material 3 theming, typed state w/ Signals, Jest + Cypress, Docker dev + mock API, ESLint flat config, Husky + lint-staged, and Node 22.12.0 pinning.
+This repo is a working baseline incorporating all fixes : Angular 20, Material 3 theming, typed state w/ Signals, Jest + Cypress, Docker dev + mock API, ESLint flat config, Husky + lint-staged, and Node 22.12.0 pinning.
 
 ## Quick start
 ```bash
