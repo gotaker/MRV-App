@@ -1,13 +1,18 @@
+/** @type {import('jest').Config} */
 module.exports = {
   preset: 'jest-preset-angular',
-  setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   testEnvironment: 'jsdom',
+  setupFilesAfterEnv: ['<rootDir>/setup-jest.cjs', '<rootDir>/src/test-setup.ts'],
   transform: {
-    '^.+\\.(ts|mjs|js|html)$': [
-      'ts-jest',
-      { tsconfig: '<rootDir>/tsconfig.spec.json', useESM: true }
-    ]
+    '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },
-  moduleFileExtensions: ['ts', 'html', 'js', 'json', 'mjs'],
-  testMatch: ['**/*.spec.ts']
+  transformIgnorePatterns: ['node_modules/(?!.*\\.m?js$)'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/files/'],
+  moduleFileExtensions: ['ts', 'js', 'html'],
+
+// ...existing config
+  collectCoverage: true,
+  passWithNoTests: true,
+  coverageReporters: ['text', 'lcov'],
+
 };

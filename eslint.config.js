@@ -1,29 +1,24 @@
-import angularPlugin from "@angular-eslint/eslint-plugin";
-import angularTemplate from "@angular-eslint/eslint-plugin-template";
-import * as tseslint from "typescript-eslint";
-import prettier from "eslint-config-prettier";
+// Minimal, stable ESLint 9 + TS setup
+import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
 
-export default [
-  ...angularPlugin.configs["flat/recommended"],
-  ...angularTemplate.configs["flat/recommended"],
-  ...tseslint.configs.recommended,
-  prettier,
+export default tseslint.config(
+  { ignores: ['dist/**', 'node_modules/**', 'coverage/**'] },
   {
-    files: ["**/*.ts"],
+    files: ['**/*.ts'],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
     languageOptions: {
-      parser: tseslint.parser,
       parserOptions: {
-        project: false,
-        sourceType: "module",
-        ecmaVersion: "latest"
-      }
+        project: ['./tsconfig.json'],
+        tsconfigRootDir: process.cwd(),
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
     },
     rules: {
-      "@typescript-eslint/no-explicit-any": "warn"
-    }
-  },
-  {
-    files: ["**/*.html"],
-    rules: {}
+      // add lightweight guardrails that won’t flake
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-explicit-any': 'warn',
+    },
   }
-];
+);

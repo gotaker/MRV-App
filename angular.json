@@ -1,4 +1,4 @@
-{
+﻿{
   "$schema": "https://json.schemastore.org/angular-cli",
   "version": 1,
   "projects": {
@@ -12,26 +12,33 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/mrv-angular20",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": [],
+            "tsConfig": "tsconfig.app.json",
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": ["src/styles.scss"],
             "inlineStyleLanguage": "scss"
-          }
+          },
+          "configurations": {
+            "production": { "optimization": true, "sourceMap": false },
+            "development": { "optimization": false, "sourceMap": true }
+          },
+          "defaultConfiguration": "development"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
+            "buildTarget": "mrv-angular20:build:development",
             "port": 4200,
-            "host": "0.0.0.0",
+            "host": "127.0.0.1",
             "proxyConfig": "proxy.conf.json"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma"
+          },
+          "configurations": {
+            "production": { "buildTarget": "mrv-angular20:build:production" },
+            "development": { "buildTarget": "mrv-angular20:build:development" }
+          },
+          "defaultConfiguration": "development"
         }
       }
     }
-  }
+  },
+  "cli": { "analytics": false }
 }
