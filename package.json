@@ -1,0 +1,67 @@
+{
+  "name": "mrv-angular20",
+  "version": "0.2.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "test": "jest --config=jest.config.cjs",
+    "lint": "eslint .",
+    "prepare": "husky",
+    "precommit:run": "lint-staged",
+    "e2e:open": "cypress open",
+    "e2e:run": "cypress run",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down -v"
+  },
+  "engines": {
+    "node": ">=22.12.0",
+    "npm": ">=10.7.0"
+  },
+  "dependencies": {
+    "@angular/animations": "^20.1.7",
+    "@angular/common": "^20.1.7",
+    "@angular/compiler": "^20.1.7",
+    "@angular/core": "^20.1.7",
+    "@angular/forms": "^20.1.7",
+    "@angular/platform-browser": "^20.1.7",
+    "@angular/platform-browser-dynamic": "^20.1.7",
+    "@angular/router": "^20.1.7",
+    "@angular/material": "^17.3.10",
+    "rxjs": "^7.8.1",
+    "zone.js": "^0.15.1"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^20.1.6",
+    "@angular/cli": "^20.1.6",
+    "@angular/compiler-cli": "^20.1.7",
+    "@angular-eslint/eslint-plugin": "^20.1.1",
+    "@angular-eslint/eslint-plugin-template": "^20.1.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.14.12",
+    "@typescript-eslint/eslint-plugin": "^8.40.0",
+    "@typescript-eslint/parser": "^8.40.0",
+    "cypress": "^13.17.0",
+    "eslint": "^9.33.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "husky": "^9.1.6",
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5",
+    "jest-preset-angular": "^15.0.0",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.3.3",
+    "ts-jest": "^30.0.3",
+    "typescript": "~5.5.4"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs,cjs}": [
+      "eslint --fix"
+    ],
+    "*.{html,scss,css,md,yml,yaml,json}": [
+      "prettier --write"
+    ]
+  }
+}
