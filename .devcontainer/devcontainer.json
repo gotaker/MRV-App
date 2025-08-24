@@ -1,8 +1,0 @@
-{
-  "name": "MRV Angular 20 Dev",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:22",
-  "postCreateCommand": "npm ci",
-  "customizations": {"vscode": {"settings": {"editor.formatOnSave": true}, "extensions": ["Angular.ng-template","dbaeumer.vscode-eslint","esbenp.prettier-vscode"]}},
-  "forwardPorts": [4200],
-  "portsAttributes": {"4200": {"label": "Angular dev server"}}
-}

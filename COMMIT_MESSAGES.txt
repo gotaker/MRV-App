@@ -1,4 +1,0 @@
-chore(tooling): pin Node to 22.12.0 and update husky pre-commit hook
-feat(theme): adopt Material 3 tokens and remove deprecated palettes
-ci: add GitHub Actions for lint/test/build
-test(e2e): add compose healthcheck overlay and dashboard smoke spec (optional)

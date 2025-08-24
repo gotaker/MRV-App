@@ -1,5 +1,0 @@
-* @your-org/frontend @your-org/devops
-/src/ @your-org/frontend
-/.github/ @your-org/devops
-/scripts/ @your-org/devops
-/docs/ @your-org/frontend

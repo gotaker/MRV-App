@@ -1,7 +1,0 @@
-{
-  "kpis": [
-    {"id": 1, "name": "Total Emissions (tCO2e)", "value": 12543},
-    {"id": 2, "name": "Energy Intensity (kWh/unit)", "value": 3.7},
-    {"id": 3, "name": "Renewables Share (%)", "value": 42}
-  ]
-}

@@ -1,5 +1,0 @@
-#!/usr/bin/env sh
-# Minimal pre-commit to keep future husky v10 compatible.
-# Lint staged files and run unit tests.
-npm run lint-staged || exit 1
-npm test --silent || exit 1

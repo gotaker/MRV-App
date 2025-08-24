@@ -1,3 +1,0 @@
-{
-  "*.{ts,js,css,scss,html,json,md}": ["prettier -w"]
-}

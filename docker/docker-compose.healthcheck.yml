@@ -1,8 +1,0 @@
-# Use with: docker compose -f docker-compose.yml -f docker/docker-compose.healthcheck.yml up
-services:
-  web:
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:4200/"]
-      interval: 5s
-      timeout: 3s
-      retries: 30
