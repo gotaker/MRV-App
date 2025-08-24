@@ -1,3 +1,5 @@
-@use 'src/styles/theme' as *;
-:root, body, html { height: 100%; }
-body { margin: 0; font-family: Roboto, Arial, sans-serif; }
+@use './styles/theme' as *;
+
+/* Global tweaks */
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", Arial, sans-serif; }

@@ -1,17 +1,17 @@
+@use 'sass:map';
 @use '@angular/material' as mat;
 
+/* Material v20+ theme: primary + tertiary only */
 $theme: mat.define-theme((
   color: (
     theme-type: light,
     primary: mat.$blue-palette,
-    tertiary: mat.$green-palette
+    tertiary: mat.$pink-palette
   ),
   typography: (),
   density: (scale: 0)
 ));
 
-@include mat.core();
 :root { @include mat.theme-vars($theme); }
-
-@include mat.card-theme($theme);
-@include mat.button-theme($theme);
+/* Keeps pre-v20 CSS vars available for older component APIs if any */
+@include mat.color-variants-backwards-compatibility($theme);

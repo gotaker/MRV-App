@@ -1,36 +1,9 @@
-@'
-{
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "ES2022",
-    "lib": ["ES2022", "DOM"],
-    "moduleResolution": "bundler",
-    "strict": true,
-    "noEmit": true,
-    "skipLibCheck": true,
-    "useDefineForClassFields": false
-  }
-}
-'@ | Set-Content -Encoding utf8 "tsconfig.json"
-
-@'
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "types": ["node"]
+    "outDir": "./out-tsc/app",
+    "types": []
   },
-  "files": [],
-  "include": ["src/**/*.ts"]
+  "files": ["src/main.ts"],
+  "include": ["src/**/*.d.ts"]
 }
-'@ | Set-Content -Encoding utf8 "tsconfig.app.json"
-
-@'
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "types": ["jest", "node"]
-  },
-  "files": [],
-  "include": ["src/**/*.spec.ts", "src/**/*.d.ts"]
-}
-'@ | Set-Content -Encoding utf8 "tsconfig.spec.json"
