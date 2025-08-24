@@ -8,3 +8,13 @@ coverage
 .husky/_
 NUL
 .zip
+# Angular / build
+dist/
+.angular/
+coverage/
+*.tsbuildinfo
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
