@@ -4,6 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "doctor": "node scripts/doctor.mjs",
+    "prestart": "npm run doctor",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
@@ -19,6 +21,7 @@
     "mock:api": "node mock-api/server.cjs",
     "start:all": "concurrently -n api,web -c blue,green \"npm:mock:api\" \"npm:start\"",
     "format": "prettier --write .",
+    "format:check": "prettier . --check",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "commit": "git-cz"
   },
@@ -55,7 +58,8 @@
     "@types/node": "^20.14.12",
     "@typescript-eslint/eslint-plugin": "^8.40.0",
     "@typescript-eslint/parser": "^8.40.0",
-    "concurrently": "^9.2.0",
+    "concurrently": "^9.2.1",
+    "cross-env": "^7.0.3",
     "cypress": "^13.17.0",
     "eslint": "^9.34.0",
     "eslint-config-prettier": "^9.1.2",

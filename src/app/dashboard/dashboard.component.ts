@@ -2,15 +2,14 @@ import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { KpisService, Kpi } from '../kpis/kpis.service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, of, startWith, map } from 'rxjs';
+import { catchError, map, of, startWith } from 'rxjs';
+import { KpisService, Kpi } from '../kpis/kpis.service';
 
 export type LoadingState = { kind: 'loading' };
 export type ErrorState   = { kind: 'err'; msg: string };
 export type OkState<T>   = { kind: 'ok'; data: T };
-export type UiState<T>     = LoadingState | ErrorState | OkState<T>;
-
+export type State<T>     = LoadingState | ErrorState | OkState<T>;
 
 @Component({
   selector: 'app-dashboard',
@@ -37,17 +36,18 @@ export type UiState<T>     = LoadingState | ErrorState | OkState<T>;
 })
 export class DashboardComponent {
   private svc = inject(KpisService);
-  private state = toSignal<UiState<Kpi[]>>(
+
+  // 🔧 KEY CHANGE: rely on startWith(...) + requireSync: true (no initialValue!)
+  private state = toSignal<State<Kpi[]>>(
     this.svc.getKpis().pipe(
-      map<Kpi[], OkState<Kpi[]>>((kpis) => ({ kind: 'ok', data: kpis })),
-      catchError((e) => of<ErrorState>({ kind: 'err', msg: e?.message ?? 'Failed to load KPIs' })),
-      startWith<LoadingState>({ kind: 'loading' }),
-    ),
-    // NOTE: no { initialValue: ... } here; startWith() provides a synchronous first value;
-    //{ initialValue: { kind: 'loading' } as LoadingState },
+    map<Kpi[], OkState<Kpi[]>>((kpis) => ({ kind: 'ok', data: kpis })),
+    catchError((e) => of<ErrorState>({ kind: 'err', msg: (e as Error)?.message ?? 'Failed to load KPIs' })),
+    startWith<LoadingState>({ kind: 'loading' }),
+  ),
+    { requireSync: true },
   );
 
   loading = computed(() => this.state().kind === 'loading');
-  error = computed(() => (this.state().kind === 'err' ? (this.state() as ErrorState).msg : ''));
-  kpis = computed<Kpi[]>(() => (this.state().kind === 'ok' ? (this.state() as OkState<Kpi[]>).data : []));
+  error   = computed(() => (this.state().kind === 'err' ? (this.state() as ErrorState).msg : ''));
+  kpis    = computed<Kpi[]>(() => (this.state().kind === 'ok' ? (this.state() as OkState<Kpi[]>).data : []));
 }

@@ -1,3 +1,4 @@
 {
-   "*.{ts,tsx,js,jsx,mjs,cjs,html,css,scss,json,md,yml,yaml}": "prettier --write"
+  "*.{ts,js,tsx,jsx,css,scss,html,md,json,yml,yaml}": "prettier --write",
+  "proxy.conf.json": "node scripts/validate-json.mjs --file proxy.conf.json"
 }

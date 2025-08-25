@@ -1,0 +1,80 @@
+*** a/angular.json
+--- b/angular.json
+@@
+   "projects": {
+     "mrv-angular20": {
+       "projectType": "application",
+       "root": "",
+       "sourceRoot": "src",
+       "prefix": "app",
+       "architect": {
+-        "build": {
+-          "builder": "@angular-devkit/build-angular:application",
+-          "options": {
+-            "outputPath": "dist/mrv-angular20",
+-            "index": "src/index.html",
+-            "main": "src/main.ts",
+-            "polyfills": [],
+-            "assets": ["src/favicon.ico", "src/assets"],
+-            "styles": ["src/styles.scss"],
+-            "inlineStyleLanguage": "scss"
+-          }
+-        },
++        "build": {
++          "builder": "@angular-devkit/build-angular:browser",
++          "options": {
++            "outputPath": "dist/mrv-angular20",
++            "index": "src/index.html",
++            "main": "src/main.ts",
++            "tsConfig": "tsconfig.app.json",
++            "assets": ["src/favicon.ico", "src/assets"],
++            "styles": ["src/styles.scss"],
++            "inlineStyleLanguage": "scss"
++          },
++          "configurations": {
++            "development": {
++              "optimization": false,
++              "sourceMap": true,
++              "buildOptimizer": false
++            },
++            "production": {
++              "optimization": true,
++              "sourceMap": false,
++              "buildOptimizer": true,
++              "outputHashing": "all"
++            }
++          }
++        },
+         "serve": {
+           "builder": "@angular-devkit/build-angular:dev-server",
+-          "options": {
+-            "buildTarget": "mrv-angular20:build:development",
+-            "port": 4200,
+-            "host": "0.0.0.0",
+-            "proxyConfig": "proxy.conf.json"
+-          }
++          "options": {
++            "browserTarget": "mrv-angular20:build:development",
++            "port": 4200,
++            "host": "0.0.0.0",
++            "proxyConfig": "proxy.conf.json"
++          },
++          "configurations": {
++            "development": {
++              "browserTarget": "mrv-angular20:build:development"
++            },
++            "production": {
++              "browserTarget": "mrv-angular20:build:production"
++            }
++          }
+         },
+         "test": {
+           "builder": "@angular-devkit/build-angular:karma",
+           "options": {
+-            "buildTarget": "mrv-angular20:build:Test"
++            "buildTarget": "mrv-angular20:build:development"
+           }
+         }
+       }
+     }
+   },

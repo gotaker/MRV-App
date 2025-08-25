@@ -1,18 +1,24 @@
-@use 'sass:map';
 @use '@angular/material' as mat;
 
-// Simple v20 theme: only primary is required.
+// Define a light theme (v20 API)
 $theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary: mat.$blue-palette
+    primary: mat.$blue-palette,
+    //tertiary: mat.$pink-palette
   ),
   typography: (),
   density: (scale: 0)
 ));
 
-:root { @include mat.theme-vars($theme); }
-@include mat.all-component-themes($theme);
+// Include Material core styles once
+@include mat.core();
 
-/* Keeps pre-v20 CSS vars available for older component APIs if any */
-@include mat.color-variants-backwards-compatibility($theme);
+// Apply the theme to :root (CSS variables + component tokens)
+:root {
+  @include mat.all-component-themes($theme);
+}
+// Optionally, you can also apply the theme to body for non-CSS variable support
+body {
+  @include mat.all-component-themes($theme);
+}
