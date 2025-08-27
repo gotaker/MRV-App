@@ -222,7 +222,7 @@ Prestart runs doctor automatically.
 
 - **CORS or network errors**
 
-  Use the proxy (/kpis) and ensure the mock API is running. Test http://127.0.0.1:3001/kpis directly.
+  Use the proxy (/kpis) and ensure the mock API is running. Test `http://127.0.0.1:3001/kpis` directly.
 
 - **Port already in use**
 
