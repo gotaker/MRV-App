@@ -148,7 +148,7 @@ UPGRADE_PLAN.md
 ## Mock API
 
 - Implementation: mock-api/server.mjs + mocks/db.json
-- Default: http://127.0.0.1:3001
+- Default: `http://127.0.0.1:3001`
 - Env overrides:
   ```
     MOCK_API_HOST=127.0.0.1
@@ -209,29 +209,25 @@ npm test
 - Mock API files exist and default port is free
 
 Prestart runs doctor automatically.
-
+---
 ## Troubleshooting
 
 - **Blank page / “Angular requires Zone.js”**
-
-  Ensure import 'zone.js' is at the top of src/main.ts.
+  - Ensure import 'zone.js' is at the top of `src/main.ts`.
 
 - **Schema validation errors (tsConfig, buildTarget, main, etc.)**
 
-  Run npm run doctor and follow the guidance. We normalize angular.json to @angular-devkit/build-angular:application and serve → buildTarget.
+   - Run `npm run doctor` and follow the guidance. We normalize angular.json to @angular-devkit/build-angular:application and serve → buildTarget.
 
 - **CORS or network errors**
-
-  Use the proxy (/kpis) and ensure the mock API is running. Test `http://127.0.0.1:3001/kpis` directly.
+  - Use the proxy (/kpis) and ensure the mock API is running. Test `http://127.0.0.1:3001/kpis` directly.
 
 - **Port already in use**
-
-  Free it or change MOCK_API_PORT and update the proxy temporarily.
+  - Free it or change MOCK_API_PORT and update the proxy temporarily.
 
 - **“Cannot find module 'json-server'”**
-
-  Install it (as dev dep): npm i -D json-server.
-
+  - Install it (as dev dep): `npm i -D json-server`.
+---
 ## Roadmap
 
 - API integration: swap mock with real endpoints via environment config.
@@ -240,7 +236,7 @@ Prestart runs doctor automatically.
 - E2E: add a Cypress smoke test using the mock API.
 - CI: npm ci → npm run doctor → npm test → npm run build.
 - Releases: semantic commits + auto-generated CHANGELOG.md.
-
+---
 ## License
 
 MIT
