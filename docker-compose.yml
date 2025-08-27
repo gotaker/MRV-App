@@ -1,0 +1,32 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8080:80'
+    depends_on:
+      api:
+        condition: service_healthy
+
+  api:
+    image: node:22-alpine
+    working_dir: /srv
+    volumes:
+      - ./:/srv
+    command: >
+      sh -c "npm ci && node mock-api/server.cjs"
+    expose:
+      - '3001'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "http=require('http');http.get('http://127.0.0.1:3001/kpis',r=>process.exit(r.statusCode<500?0:1)).on('error',()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: always
