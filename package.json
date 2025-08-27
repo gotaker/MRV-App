@@ -24,7 +24,8 @@
     "format:check": "prettier . --check",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "commit": "git-cz",
-    "ci:verify": "node scripts/doctor.mjs && ng build -c production && npm test -- --passWithNoTests"
+    "ci:verify": "node scripts/doctor.mjs && ng build -c production && npm test -- --passWithNoTests",
+    "doc:structure": "node scripts/gen-structure.mjs README_TREE.md"
   },
   "engines": {
     "node": ">=22.12.0",

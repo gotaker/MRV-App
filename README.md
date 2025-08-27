@@ -1,3 +1,5 @@
+[![Regenerate tree](https://img.shields.io/badge/Regenerate%20tree-npm%20run%20doc%3Astructure-2ea44f?logo=npm&logoColor=white)](#project-structure)
+
 # MRV App (Angular 20)
 
 A small, modern Angular 20 app that displays KPIs with a fast local dev loop and a built-in mock API.
@@ -19,7 +21,7 @@ A small, modern Angular 20 app that displays KPIs with a fast local dev loop and
 
 > Windows/PowerShell shown; macOS/Linux equivalent commands work the same.
 
-````powershell
+```powershell
 # 1) Use the pinned Node version
 nvm use 22.12.0
 
@@ -30,7 +32,7 @@ npm ci
 npm run start:all
 # Web: http://127.0.0.1:4200/
 # API: http://127.0.0.1:3001/kpis
-````
+```
 
 ## Scripts
 
@@ -44,43 +46,122 @@ npm run start:all
 | `npm run doctor`    | Validates `angular.json`, `tsconfig*`, `proxy.conf.json`, mock API presence/ports |
 
 > prestart runs the doctor so you get actionable errors before the dev server spins up.
+
 ---
+
 ## Project layout
 
-.
-├─ src/
+```text
+MRV-App/
+.dockerignore
+.gitattributes
+.github/
+│  ├─ workflows/
+│  │  ├─ ci.yml
+.gitignore
+.gitmessage.txt
+.husky/
+│  ├─ _/
+│  │  ├─ .gitignore
+│  │  ├─ applypatch-msg
+│  │  ├─ commit-msg
+│  │  ├─ h
+│  │  ├─ husky.sh
+│  │  ├─ post-applypatch
+│  │  ├─ post-checkout
+│  │  ├─ post-commit
+│  │  ├─ post-merge
+│  │  ├─ post-rewrite
+│  │  ├─ pre-applypatch
+│  │  ├─ pre-auto-gc
+│  │  ├─ pre-commit
+│  │  ├─ pre-merge-commit
+│  │  ├─ pre-push
+│  │  ├─ pre-rebase
+│  │  ├─ prepare-commit-msg
+│  ├─ commit-msg
+│  ├─ pre-commit
+│  ├─ pre-push
+│  ├─ prepare-commit-msg
+.lintstagedrc
+.node-version
+.nvmrc
+.prettierrc
+angular.json
+angular.json.bak
+APPLY_ME.md
+ARCHITECTURE.md
+CHANGELOG.md
+COMMIT_PLAN.md
+commitlint.config.cjs
+CONTRIBUTING.md
+docker-compose.dev.yml
+docker-compose.yml
+Dockerfile
+eslint.config.js
+fix-angular-serve.patch
+jest.config.cjs
+mock-api/
+│  ├─ server.mjs
+mocks/
+│  ├─ db.json
+nginx.conf
+package-lock.json
+package.json
+prd.md
+proxy.conf.docker.json
+proxy.conf.json
+README.md
+scripts/
+│  ├─ check-scss-imports.mjs
+│  ├─ doctor.mjs
+│  ├─ gen-commit-msg.mjs
+│  ├─ gen-structure.mjs
+│  ├─ validate-json.mjs
+SECURITY.md
+src/
 │  ├─ app/
-│  │  ├─ dashboard/           # DashboardComponent (signals, Material cards)
-│  │  ├─ kpis/                # KpisService (calls /kpis)
-│  │  └─ shared/              # interceptors, GlobalErrorHandler
-│  ├─ styles.scss             # uses styles/theme.scss
-│  └─ styles/
-│     └─ theme.scss           # Angular Material theming (M3)
-├─ mocks/
-│  └─ db.json                 # mock data for json-server
-├─ mock-api/
-│  └─ server.mjs              # ESM bootstrapper around json-server
-├─ proxy.conf.json            # proxies /kpis -> http://127.0.0.1:3001
-├─ angular.json               # CLI configuration (serve uses buildTarget)
-├─ tsconfig*.json             # TypeScript configs (root/app/spec)
-└─ package.json
+│  │  ├─ app.component.ts
+│  │  ├─ dashboard/
+│  │  │  ├─ dashboard.component.ts
+│  │  ├─ kpis/
+│  │  │  ├─ kpis.service.ts
+│  │  ├─ shared/
+│  │  │  ├─ auth.interceptor.ts
+│  │  │  ├─ error.interceptor.ts
+│  │  │  ├─ global-error.handler.ts
+│  ├─ favicon.ico
+│  ├─ index.html
+│  ├─ main.ts
+│  ├─ styles/
+│  │  ├─ theme.scss
+│  ├─ styles.scss
+│  ├─ test-setup.ts
+tsconfig.app.json
+tsconfig.json
+tsconfig.spec.json
+UPGRADE_PLAN.md
+```
 
 ---
 
 ## Mock API
+
 - Implementation: mock-api/server.mjs + mocks/db.json
 - Default: http://127.0.0.1:3001
 - Env overrides:
-    ```
-      MOCK_API_HOST=127.0.0.1
-      MOCK_API_PORT=3002
-     ```
+  ```
+    MOCK_API_HOST=127.0.0.1
+    MOCK_API_PORT=3002
+  ```
 
 If a port is busy, either free it or:
+
 ```powershell
 $env:MOCK_API_PORT=3002
 npm run mock:api
-````
+```
+
 Then adjust `proxy.conf.json` temporarily to match the new port (default is 3001).
 
 ## HTTP Proxy (dev)
@@ -163,4 +244,3 @@ Prestart runs doctor automatically.
 ## License
 
 MIT
-
