@@ -18,7 +18,7 @@
     "e2e:run": "cypress run",
     "docker:up": "docker compose up --build",
     "docker:down": "docker compose down -v",
-    "mock:api": "node mock-api/server.cjs",
+    "mock:api": "node mock-api/server.mjs",
     "start:all": "concurrently -n api,web -c blue,green \"npm:mock:api\" \"npm:start\"",
     "format": "prettier --write .",
     "format:check": "prettier . --check",
