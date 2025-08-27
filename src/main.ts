@@ -1,20 +1,37 @@
+// src/main.ts
 import 'zone.js';
+import { ErrorHandler, importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter, Routes, withInMemoryScrolling } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+
 import { AppComponent } from './app/app.component';
 import { DashboardComponent } from './app/dashboard/dashboard.component';
 import { authInterceptor } from './app/shared/auth.interceptor';
+import { errorInterceptor } from './app/shared/error.interceptor';
+import { GlobalErrorHandler } from './app/shared/global-error.handler';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
+  // { path: '**', redirectTo: '' }, // optional fallback
 ];
 
 bootstrapApplication(AppComponent, {
   providers: [
+    // Router
     provideRouter(routes, withInMemoryScrolling({ anchorScrolling: 'enabled' })),
-    provideHttpClient(withInterceptors([authInterceptor])),
+
+    // HTTP (both interceptors here)
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
+
+    // Animations + Material snack bar for toasts
     provideAnimations(),
+    importProvidersFrom(MatSnackBarModule),
+
+    // Global error handler
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
   ],
-}).catch(err => console.error(err));
+}).catch((err) => console.error(err));
+// src/app/shared/error.interceptor.ts

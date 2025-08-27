@@ -1,0 +1,5 @@
+# <type>(<scope>): <summary>
+# Body (optional): What/why, links, notes
+#
+# types: feat | fix | docs | style | refactor | test | build | chore
+# scope: folder or feature (e.g., dashboard, kpis)

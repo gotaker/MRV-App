@@ -23,7 +23,8 @@
     "format": "prettier --write .",
     "format:check": "prettier . --check",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "ci:verify": "node scripts/doctor.mjs && ng build -c production && npm test -- --passWithNoTests"
   },
   "engines": {
     "node": ">=22.12.0",

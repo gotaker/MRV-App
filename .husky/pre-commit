@@ -1,1 +1,6 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+node scripts/gen-commit-msg.mjs "$1" "$2" "$3"
+
 npx --no-install lint-staged
