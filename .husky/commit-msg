@@ -1,1 +1,8 @@
-npx --no-install commitlint --edit ""
+#!/usr/bin/env sh
+msgFile="$1"
+# Skip if message file is missing or empty (e.g., --allow-empty-message)
+if [ ! -f "$msgFile" ] || [ ! -s "$msgFile" ]; then
+  echo "⏭️  empty commit message – skipping commitlint"
+  exit 0
+fi
+npx --no-install commitlint --edit "$msgFile"

@@ -1,1 +1,2 @@
-node scripts/gen-commit-msg.mjs "" "" ""
+#!/usr/bin/env sh
+node scripts/gen-commit-msg.mjs "$1" "$2" "$3"
