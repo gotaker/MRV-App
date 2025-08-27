@@ -8,14 +8,15 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AppComponent } from './app/app.component';
+import { HomeComponent } from './app/home/home.component';
 import { DashboardComponent } from './app/dashboard/dashboard.component';
 import { authInterceptor } from './app/shared/auth.interceptor';
 import { errorInterceptor } from './app/shared/error.interceptor';
 import { GlobalErrorHandler } from './app/shared/global-error.handler';
 
 const routes: Routes = [
-  { path: '', component: DashboardComponent },
-  // { path: '**', redirectTo: '' }, // optional fallback
+  { path: '', component: HomeComponent }, // 👈 new landing page
+  { path: 'dashboard', component: DashboardComponent }, // { path: '**', redirectTo: '' }, // optional fallback
 ];
 
 bootstrapApplication(AppComponent, {
