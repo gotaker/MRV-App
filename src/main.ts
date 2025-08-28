@@ -20,7 +20,12 @@ import { GlobalErrorHandler } from './app/shared/global-error.handler';
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
-  { path: 'kpi/:id', component: KpiDetailComponent, canActivate: [authGuard] },
+  {
+    path: 'kpis',
+    loadComponent: () => import('./app/kpis/kpis-list.component').then((m) => m.KpisListComponent),
+    canActivate: [authGuard],
+  },
+  { path: 'kpi/:name', component: KpiDetailComponent, canActivate: [authGuard] },
   {
     path: 'login',
     loadComponent: () => import('./app/auth/login.component').then((m) => m.LoginComponent),
