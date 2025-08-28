@@ -2,6 +2,17 @@
   "kpis": [
     { "name": "Active Users", "value": 1284 },
     { "name": "Conversion %", "value": 4.7 },
-    { "name": "MRR ($)", "value": 23120 }
+    { "name": "MRR ($)", "value": 23120 },
+    { "id": "revenue", "name": "Revenue", "value": 123 },
+    { "id": "users", "name": "Active Users", "value": 9421 },
+    { "id": "nps", "name": "NPS", "value": 48 }
+  ],
+  "kpiTrends": [
+    { "kpiId": "revenue", "points": [110, 115, 113, 118, 120, 121, 119, 123, 128, 127, 129, 131] },
+    {
+      "kpiId": "users",
+      "points": [8200, 8350, 8400, 8600, 8800, 9000, 9100, 9200, 9250, 9300, 9400, 9421]
+    },
+    { "kpiId": "nps", "points": [40, 41, 42, 43, 44, 46, 45, 47, 46, 49, 50, 48] }
   ]
 }
