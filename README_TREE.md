@@ -58,6 +58,7 @@ package.json
 prd.md
 proxy.conf.docker.json
 proxy.conf.json
+README_TREE.md
 README.md
 scripts/
 │  ├─ check-scss-imports.mjs
@@ -66,11 +67,20 @@ scripts/
 │  ├─ gen-structure.mjs
 │  ├─ validate-json.mjs
 SECURITY.md
+setup-jest.cjs
 src/
 │  ├─ app/
 │  │  ├─ app.component.ts
+│  │  ├─ auth/
+│  │  │  ├─ auth.guard.ts
+│  │  │  ├─ auth.service.ts
+│  │  │  ├─ login.component.spec.ts
+│  │  │  ├─ login.component.ts
 │  │  ├─ dashboard/
 │  │  │  ├─ dashboard.component.ts
+│  │  ├─ home/
+│  │  │  ├─ home.component.spec.ts
+│  │  │  ├─ home.component.ts
 │  │  ├─ kpis/
 │  │  │  ├─ kpis.service.ts
 │  │  ├─ shared/
