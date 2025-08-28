@@ -11,6 +11,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppComponent } from './app/app.component';
 import { HomeComponent } from './app/home/home.component';
 import { DashboardComponent } from './app/dashboard/dashboard.component';
+import { KpiDetailComponent } from './app/kpis/kpi-detail.component';
 import { authGuard } from './app/auth/auth.guard';
 import { authInterceptor } from './app/shared/auth.interceptor';
 import { errorInterceptor } from './app/shared/error.interceptor';
@@ -19,6 +20,7 @@ import { GlobalErrorHandler } from './app/shared/global-error.handler';
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+  { path: 'kpi/:id', component: KpiDetailComponent, canActivate: [authGuard] },
   {
     path: 'login',
     loadComponent: () => import('./app/auth/login.component').then((m) => m.LoginComponent),

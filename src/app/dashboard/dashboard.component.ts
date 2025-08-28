@@ -23,7 +23,12 @@ export type State<T> = LoadingState | ErrorState | OkState<T>;
         <mat-card-content><p>Please wait.</p></mat-card-content>
       </mat-card>
 
-      <mat-card *ngFor="let k of kpis()" appearance="outlined">
+      <mat-card
+        *ngFor="let k of kpis()"
+        appearance="outlined"
+        [routerLink]="['/kpi', k.id]"
+        style="cursor:pointer;"
+      >
         <mat-card-header
           ><mat-card-title>{{ k.name }}</mat-card-title></mat-card-header
         >
