@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, map, of, startWith } from 'rxjs';
 import { KpisService, Kpi } from '../kpis/kpis.service';
+import { AuthService } from '../auth/auth.service';
 
 // Discriminated union for state
 type LoadingState = { kind: 'loading' };
@@ -150,6 +151,14 @@ type State<T> = LoadingState | ErrorState | OkState<T>;
         </mat-card>
       </div>
     </section>
+
+    <div class="status" *ngIf="user(); else guest">
+      Signed in as <strong>{{ user()?.username }}</strong>
+      <button mat-button (click)="logout()">Logout</button>
+    </div>
+    <ng-template #guest>
+      <a mat-stroked-button routerLink="/login">Login</a>
+    </ng-template>
   `,
 })
 export class HomeComponent {
@@ -171,4 +180,8 @@ export class HomeComponent {
   kpis = computed<Kpi[]>(() =>
     this.state().kind === 'ok' ? (this.state() as OkState<Kpi[]>).data : [],
   );
+
+  private auth = inject(AuthService);
+  user = this.auth.user;
+  logout = () => this.auth.logout();
 }

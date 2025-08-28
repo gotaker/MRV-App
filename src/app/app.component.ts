@@ -1,47 +1,28 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { RouterOutlet, RouterLink } from '@angular/router';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterOutlet],
+  imports: [RouterOutlet, RouterLink, MatToolbarModule, MatButtonModule],
   styles: [
     `
-      header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 16px;
-        border-bottom: 1px solid #eee;
-      }
-      a.brand {
-        font-weight: 700;
-        text-decoration: none;
-        color: inherit;
-      }
-      nav a {
-        margin-left: 12px;
-        text-decoration: none;
-        color: #3f51b5;
-      }
-      main {
-        min-height: calc(100vh - 60px);
+      .spacer {
+        flex: 1;
       }
     `,
   ],
   template: `
-    <header>
-      <a class="brand" routerLink="/">MRV App</a>
-      <nav>
-        <a routerLink="/dashboard">Dashboard</a>
-        <a href="https://github.com/gotaker/MRV-App" target="_blank" rel="noopener">Repo</a>
-      </nav>
-    </header>
+    <mat-toolbar color="primary">
+      <a routerLink="/" style="color:inherit;text-decoration:none;font-weight:600;">MRV</a>
+      <span class="spacer"></span>
+      <a mat-button routerLink="/dashboard">Dashboard</a>
+      <a mat-button routerLink="/login">Login</a>
+    </mat-toolbar>
 
-    <main>
-      <router-outlet />
-    </main>
+    <router-outlet />
   `,
 })
 export class AppComponent {}
