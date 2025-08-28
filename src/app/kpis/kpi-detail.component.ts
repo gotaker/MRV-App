@@ -1,52 +1,37 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
-import { KpisService, Kpi } from './kpis.service';
+import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { combineLatest, map, startWith } from 'rxjs';
-import { switchMap } from 'rxjs';
+import { catchError, map, of, startWith, switchMap } from 'rxjs';
+import { KpisService, Kpi } from '../kpis/kpis.service';
 
 type Loading = { kind: 'loading' };
 type Err = { kind: 'err'; msg: string };
-type Ok = { kind: 'ok'; kpi: Kpi; trend: number[] };
+type Ok = { kind: 'ok'; kpi: Kpi };
 type State = Loading | Err | Ok;
 
 @Component({
-  standalone: true,
   selector: 'app-kpi-detail',
-  imports: [CommonModule, MatCardModule, RouterLink],
-  styles: [
-    `
-      .sparkline {
-        width: 100%;
-        height: 80px;
-      }
-      .meta {
-        color: #666;
-        font-size: 14px;
-      }
-    `,
-  ],
+  standalone: true,
+  imports: [CommonModule, MatCardModule],
   template: `
-    <a routerLink="/dashboard" style="text-decoration:none;">← Back to Dashboard</a>
+    <mat-card appearance="outlined">
+      <ng-container [ngSwitch]="viewKind()">
+        <mat-card-header *ngSwitchCase="'loading'">
+          <mat-card-title>Loading…</mat-card-title>
+        </mat-card-header>
 
-    <mat-card appearance="outlined" style="margin-top:12px;">
-      <ng-container [ngSwitch]="state().kind">
-        <div *ngSwitchCase="'loading'">Loading…</div>
-        <div *ngSwitchCase="'err'">{{ (state() as Err).msg }}</div>
+        <mat-card-header *ngSwitchCase="'err'">
+          <mat-card-title>Failed to load KPI</mat-card-title>
+          <mat-card-subtitle>{{ errMsg() }}</mat-card-subtitle>
+        </mat-card-header>
+
         <ng-container *ngSwitchCase="'ok'">
           <mat-card-header>
-            <mat-card-title>{{ (state() as Ok).kpi.name }}</mat-card-title>
-            <mat-card-subtitle class="meta"
-              >Current value: {{ (state() as Ok).kpi.value }}</mat-card-subtitle
-            >
+            <mat-card-title>{{ kpi()?.name }}</mat-card-title>
+            <mat-card-subtitle>Current value: {{ kpi()?.value }}</mat-card-subtitle>
           </mat-card-header>
-          <mat-card-content>
-            <svg class="sparkline" viewBox="0 0 300 80" preserveAspectRatio="none">
-              <path [attr.d]="path()" fill="none" stroke="#1976d2" stroke-width="2"></path>
-            </svg>
-          </mat-card-content>
         </ng-container>
       </ng-container>
     </mat-card>
@@ -56,42 +41,29 @@ export class KpiDetailComponent {
   private route = inject(ActivatedRoute);
   private svc = inject(KpisService);
 
-  private id = signal<string>('');
-  private data$ = this.route.paramMap.pipe(
-    map((pm) => pm.get('id') ?? ''),
-    map((v) => this.id.set(v)),
-    startWith(null as unknown as void),
-    map(() => this.id()), // trigger recompute
-  );
-
-  private stateSig = toSignal<State>(
-    combineLatest([this.data$]).pipe(
-      // when id changes, fetch both
-      map(() => this.id()),
-      switchMap((id) =>
-        combineLatest([this.svc.getKpi(id), this.svc.getKpiTrend(id)]).pipe(
-          map(([kpi, trend]) => ({ kind: 'ok', kpi, trend }) as State),
-          startWith({ kind: 'loading' } as State),
+  // Stream state -> signal, no casts in template
+  private state = toSignal<State>(
+    this.route.paramMap.pipe(
+      map((pm) => pm.get('name') ?? pm.get('id') ?? ''),
+      switchMap((key) =>
+        this.svc.getKpis().pipe(
+          map<Kpi[], State>((list) => {
+            const found = list.find((k) => k.name === key);
+            if (!found) throw new Error('Not found');
+            return { kind: 'ok', kpi: found } as Ok;
+          }),
+          startWith<Loading>({ kind: 'loading' }),
+          catchError((e) => of<Err>({ kind: 'err', msg: (e as Error)?.message ?? 'Failed' })),
         ),
       ),
     ),
     { requireSync: true },
   );
 
-  state = computed(() => this.stateSig());
-
-  // Build an SVG path for the sparkline
-  path = computed(() => {
-    const s = this.state();
-    if (s.kind !== 'ok' || !s.trend.length) return '';
-    const pts = s.trend;
-    const w = 300,
-      h = 80;
-    const min = Math.min(...pts),
-      max = Math.max(...pts);
-    const span = Math.max(1, max - min);
-    const stepX = pts.length > 1 ? w / (pts.length - 1) : w;
-    const y = (v: number) => h - ((v - min) / span) * (h - 6) - 3; // small padding
-    return pts.map((v, i) => `${i ? 'L' : 'M'}${i * stepX},${y(v)}`).join(' ');
-  });
+  // Template-friendly derived getters
+  readonly viewKind = computed(() => this.state().kind);
+  readonly errMsg = computed(() => (this.state().kind === 'err' ? (this.state() as Err).msg : ''));
+  readonly kpi = computed<Kpi | null>(() =>
+    this.state().kind === 'ok' ? (this.state() as Ok).kpi : null,
+  );
 }
