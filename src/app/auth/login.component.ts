@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from './auth.service';
 
 @Component({
@@ -14,17 +14,18 @@ import { AuthService } from './auth.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterLink,
     MatCardModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
   ],
   template: `
-    <div style="display:grid;place-items:center;padding:24px;">
-      <mat-card appearance="outlined" style="width:min(420px,90vw);">
-        <mat-card-title>Sign in</mat-card-title>
+    <div style="display:grid;place-items:center;height:calc(100dvh - 80px);">
+      <mat-card appearance="outlined" style="width:min(420px, 92vw)">
+        <mat-card-header><mat-card-title>Sign in</mat-card-title></mat-card-header>
         <mat-card-content>
-          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <form [formGroup]="form" (ngSubmit)="submit()">
             <mat-form-field appearance="outline" style="width:100%;">
               <mat-label>Username</mat-label>
               <input matInput formControlName="username" autocomplete="username" />
@@ -40,9 +41,10 @@ import { AuthService } from './auth.service';
               />
             </mat-form-field>
 
-            <button mat-flat-button color="primary" style="width:100%;" [disabled]="form.invalid">
-              Login
-            </button>
+            <div style="display:flex;gap:12px;justify-content:flex-end;">
+              <a mat-button routerLink="/">Cancel</a>
+              <button mat-flat-button color="primary" [disabled]="form.invalid">Login</button>
+            </div>
           </form>
         </mat-card-content>
       </mat-card>
@@ -50,17 +52,20 @@ import { AuthService } from './auth.service';
   `,
 })
 export class LoginComponent {
+  private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
 
-  form = new FormGroup({
-    username: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    password: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+  form = this.fb.group({
+    username: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
+    password: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
   });
 
   onSubmit() {
+    if (this.form.invalid) return;
     const { username, password } = this.form.getRawValue();
-    this.auth.login(username, password);
-    this.router.navigate(['/dashboard']);
+    if (this.auth.login(username, password)) {
+      this.router.navigateByUrl('/dashboard');
+    }
   }
 }
