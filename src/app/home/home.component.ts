@@ -3,13 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, map, of, startWith } from 'rxjs';
-
 import { KpisService, Kpi } from '../kpis/kpis.service';
 
-// Discriminated-union for a tiny state machine
+// Discriminated union for state
 type LoadingState = { kind: 'loading' };
 type ErrorState = { kind: 'err'; msg: string };
 type OkState<T> = { kind: 'ok'; data: T };
@@ -61,13 +59,13 @@ type State<T> = LoadingState | ErrorState | OkState<T>;
       }
       .ok {
         background: #2e7d32;
-      } /* green */
+      }
       .err {
         background: #c62828;
-      } /* red */
+      }
       .loading {
         background: #f9a825;
-      } /* amber */
+      }
       .panel {
         padding: 12px 16px;
         border-radius: 14px;
