@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject, computed, signal, effect } from '@angular/core';
+import { Component, OnInit, ViewChild, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -115,8 +115,8 @@ export class KpisListComponent implements OnInit {
     if (!s || !s.active || s.direction === '') return filtered;
     const dir = s.direction === 'asc' ? 1 : -1;
     return [...filtered].sort((a, b) => {
-      const av = (a as any)[s.active];
-      const bv = (b as any)[s.active];
+      const av = a[s.active as keyof Kpi];
+      const bv = b[s.active as keyof Kpi];
       return av < bv ? -1 * dir : av > bv ? 1 * dir : 0;
     });
   });
