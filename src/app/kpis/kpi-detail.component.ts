@@ -41,6 +41,11 @@ export class KpiDetailComponent {
   private route = inject(ActivatedRoute);
   private svc = inject(KpisService);
 
+  public path(): string {
+    const s = this.state();
+    return s && s.kind === 'ok' ? `/kpis/${s.kpi.id}` : '';
+  }
+
   // Stream state -> signal, no casts in template
   private state = toSignal<State>(
     this.route.paramMap.pipe(

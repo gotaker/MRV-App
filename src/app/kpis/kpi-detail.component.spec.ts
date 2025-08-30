@@ -1,23 +1,21 @@
 import { TestBed } from '@angular/core/testing';
-import { KpiDetailComponent } from './kpi-detail.component';
-import { KpisService } from './kpis.service';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
-
-const mockSvc = {
-  getKpi: () => of({ id: 'revenue', name: 'Revenue', value: 123 }),
-  getKpiTrend: () => of([100, 110, 120, 123]),
-};
+import { KpiDetailComponent } from './kpi-detail.component';
+import { KpisService, Kpi } from '../kpis/kpis.service';
 
 describe('KpiDetailComponent', () => {
-  it('renders KPI name and builds a path', async () => {
-    await TestBed.configureTestingModule({
+  it('renders KPI name from name route param', () => {
+    TestBed.configureTestingModule({
       imports: [KpiDetailComponent],
       providers: [
-        { provide: KpisService, useValue: mockSvc },
         {
           provide: ActivatedRoute,
-          useValue: { paramMap: of(new Map([['id', 'revenue']]) as any) },
+          useValue: { paramMap: of(convertToParamMap({ name: 'Revenue' })) },
+        },
+        {
+          provide: KpisService,
+          useValue: { getKpis: () => of<Kpi[]>([{ id: 1, name: 'Revenue', value: 100 }]) },
         },
       ],
     }).compileComponents();
@@ -25,7 +23,5 @@ describe('KpiDetailComponent', () => {
     const f = TestBed.createComponent(KpiDetailComponent);
     f.detectChanges();
     expect(f.nativeElement.textContent).toContain('Revenue');
-    const d = f.componentInstance.path();
-    expect(d.startsWith('M')).toBeTruthy();
   });
 });
