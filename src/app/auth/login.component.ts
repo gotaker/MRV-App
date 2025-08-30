@@ -25,7 +25,7 @@ import { AuthService } from './auth.service';
       <mat-card appearance="outlined" style="width:min(420px, 92vw)">
         <mat-card-header><mat-card-title>Sign in</mat-card-title></mat-card-header>
         <mat-card-content>
-          <form [formGroup]="form" (ngSubmit)="submit()">
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
             <mat-form-field appearance="outline" style="width:100%;">
               <mat-label>Username</mat-label>
               <input matInput formControlName="username" autocomplete="username" />
